@@ -1,0 +1,6 @@
+{
+  "name": "Collected Sounds",
+  "description": "An experimental digital music exhibition and AI-assisted music collection presenting original songs with audio-reactive visualizer and synchronized bilingual lyrics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
