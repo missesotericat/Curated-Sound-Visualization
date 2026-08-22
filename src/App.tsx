@@ -18,6 +18,40 @@ export default function App() {
   const [activeSection, setActiveSection] = useState<'intro' | 'collection' | 'closing'>('intro');
   const [viewMode, setViewMode] = useState<'gallery' | 'immersive'>('gallery');
 
+  // Theme state with localStorage persistence (Default: Dark Mode)
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    if (typeof window !== 'undefined') {
+      const savedTheme = localStorage.getItem('sonoverse_theme');
+      if (savedTheme === 'light' || savedTheme === 'dark') {
+        return savedTheme;
+      }
+    }
+    return 'dark';
+  });
+
+  // Sync theme with HTML root and localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('sonoverse_theme', theme);
+    } catch {
+      // Ignore storage write errors
+    }
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+      root.classList.remove('light');
+      root.setAttribute('data-theme', 'dark');
+    } else {
+      root.classList.add('light');
+      root.classList.remove('dark');
+      root.setAttribute('data-theme', 'light');
+    }
+  }, [theme]);
+
+  const handleToggleTheme = () => {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  };
+
   // Subscribe to persistent audio engine
   useEffect(() => {
     const unsubscribe = audioEngine.subscribe((state) => {
@@ -97,7 +131,7 @@ export default function App() {
   };
 
   return (
-    <div className="relative min-h-screen bg-[#10110E] text-[#F5F3EC] font-sans-clean">
+    <div className="relative min-h-screen bg-[var(--bg-main)] text-[var(--text-primary)] font-sans-clean transition-colors duration-300">
       {/* Editorial Fine Film Grain Overlay */}
       <div className="noise-overlay" />
 
@@ -120,6 +154,8 @@ export default function App() {
             onOpenPlayer={() => setViewMode('immersive')}
             activeSection={activeSection}
             onNavigate={handleNavigateSection}
+            theme={theme}
+            onToggleTheme={handleToggleTheme}
           />
 
           <main className="w-full">

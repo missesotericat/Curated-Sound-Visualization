@@ -157,11 +157,11 @@ export const CollectionGallery: React.FC<CollectionGalleryProps> = ({
   const filteredCountFormatted = String(filteredTracks.length).padStart(2, '0');
 
   return (
-    <section id="collection" className="py-24 px-6 md:px-16 max-w-7xl mx-auto border-b hairline-border bg-[#10110E]">
+    <section id="collection" className="py-24 px-6 md:px-16 max-w-7xl mx-auto border-b hairline-border bg-[var(--bg-main)] transition-colors duration-300">
       {/* 02 / EXHIBITION WING HEADER */}
       <div className="space-y-6 pb-8 mb-10 border-b hairline-border">
         {/* Wing Index */}
-        <div className="flex items-center gap-2 text-[10px] uppercase font-sans-clean tracking-widest text-[#8C8E58] font-semibold">
+        <div className="flex items-center gap-2 text-[10px] uppercase font-sans-clean tracking-widest text-[var(--accent-primary)] font-semibold">
           <span>02 / {totalExhibitedCount} EXHIBITION WING</span>
         </div>
 
@@ -169,7 +169,7 @@ export const CollectionGallery: React.FC<CollectionGalleryProps> = ({
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-8">
           {/* Main Section Title */}
           <div>
-            <h2 className="font-serif-editorial text-4xl sm:text-6xl text-[#F5F3EC] tracking-tight leading-none">
+            <h2 className="font-heading-jost text-4xl sm:text-6xl text-[var(--text-primary)] tracking-tight leading-none">
               THE COLLECTION.
             </h2>
           </div>
@@ -177,30 +177,30 @@ export const CollectionGallery: React.FC<CollectionGalleryProps> = ({
           {/* PRIMARY TAXONOMY: LYRIC LANGUAGES */}
           <div className="flex flex-col items-start lg:items-end w-full lg:w-auto">
             {/* Small Editorial Label */}
-            <span className="text-[10px] font-mono uppercase tracking-widest text-[#8C8E58] font-semibold mb-1.5 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#8C8E58] inline-block animate-pulse"></span>
+            <span className="text-[10px] font-mono uppercase tracking-widest text-[var(--accent-primary)] font-semibold mb-1.5 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-primary)] inline-block animate-pulse"></span>
               LYRIC LANGUAGES
             </span>
 
             {/* Language Values: Dynamic list with high editorial visual prominence */}
-            <div className="flex flex-wrap items-center gap-x-3 sm:gap-x-4 gap-y-2 text-[#F5F3EC]">
+            <div className="flex flex-wrap items-center gap-x-3 sm:gap-x-4 gap-y-2 text-[var(--text-primary)]">
               {languageOptions.map((lang, idx) => {
                 const isActive = selectedLanguage === lang;
 
                 return (
                   <React.Fragment key={lang}>
-                    {idx > 0 && <span className="text-white/20 select-none font-mono text-sm">/</span>}
+                    {idx > 0 && <span className="opacity-20 select-none font-mono text-sm">/</span>}
                     <button
                       onClick={() => setSelectedLanguage(lang)}
-                      className={`font-serif-editorial text-lg sm:text-2xl tracking-wide transition-all duration-300 relative py-0.5 cursor-pointer ${
+                      className={`font-sans-clean text-lg sm:text-2xl tracking-wide transition-all duration-300 relative py-0.5 cursor-pointer ${
                         isActive
-                          ? 'text-[#D4CE82] font-semibold opacity-100'
-                          : 'text-[#A5A396] hover:text-[#F5F3EC] opacity-45 hover:opacity-85 font-normal'
+                          ? 'text-[var(--accent-primary)] font-semibold opacity-100'
+                          : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] opacity-60 hover:opacity-100 font-normal'
                       }`}
                     >
                       <span>{lang}</span>
                       {isActive && (
-                        <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#8C8E58] rounded-full shadow-[0_0_8px_rgba(140,142,88,0.8)]"></span>
+                        <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[var(--accent-primary)] rounded-full"></span>
                       )}
                     </button>
                   </React.Fragment>
@@ -211,16 +211,16 @@ export const CollectionGallery: React.FC<CollectionGalleryProps> = ({
         </div>
 
         {/* Collection Sub-Header */}
-        <p className="font-serif-editorial italic text-lg sm:text-xl text-[#A5A396] pt-1">
+        <p className="font-subtitle-outfit text-lg sm:text-xl text-[var(--text-secondary)] pt-1">
           {tracks.length === 6 ? 'Six' : tracks.length} pieces. Machine-assisted composition, neural vocal models, human direction.
         </p>
 
-        {/* SECONDARY CLASSIFICATION TAGS (Moved underneath sub-header) */}
-        <div className="border border-white/10 bg-[#141612] p-4 sm:p-5 space-y-4 shadow-xl">
+        {/* SECONDARY CLASSIFICATION TAGS */}
+        <div className="border hairline-border bg-[var(--bg-surface)] p-4 sm:p-5 space-y-4 shadow-xl">
           {/* Row 1: Content Type Hierarchy */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex flex-wrap items-center gap-2 text-[11px] font-sans-clean uppercase tracking-widest">
-              <span className="text-[10px] font-mono text-[#8C8E58] mr-2 shrink-0 font-semibold">
+              <span className="text-[10px] font-mono text-[var(--accent-primary)] mr-2 shrink-0 font-semibold">
                 CONTENT TYPE:
               </span>
               {contentTypes.map((type) => {
@@ -236,8 +236,8 @@ export const CollectionGallery: React.FC<CollectionGalleryProps> = ({
                     onClick={() => setSelectedContentType(type)}
                     className={`px-3 py-1.5 text-[11px] border transition-all duration-200 cursor-pointer ${
                       isActive
-                        ? 'bg-[#8C8E58] text-[#10110E] border-[#8C8E58] font-bold shadow-sm'
-                        : 'border-white/10 text-[#A5A396] hover:border-white/30 hover:text-[#F5F3EC] bg-[#191B16]'
+                        ? 'bg-[var(--accent-primary)] text-[#FFFFFF] dark:text-[#10110E] border-[var(--accent-primary)] font-bold shadow-sm'
+                        : 'border hairline-border text-[var(--text-secondary)] hover:border-[var(--accent-primary)] hover:text-[var(--text-primary)] bg-[var(--bg-chip)]'
                     }`}
                   >
                     {type} {type === 'ALL' ? `(${filteredCountFormatted})` : count > 0 ? `(${String(count).padStart(2, '0')})` : ''}
@@ -249,7 +249,7 @@ export const CollectionGallery: React.FC<CollectionGalleryProps> = ({
             {hasActiveFilters && (
               <button
                 onClick={resetAllFilters}
-                className="self-start sm:self-center flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wider text-[#D4CE82] hover:text-[#F5F3EC] transition-colors py-1 px-2 border border-[#8C8E58]/40 hover:border-[#8C8E58] bg-[#8C8E58]/10 cursor-pointer"
+                className="self-start sm:self-center flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wider text-[var(--accent-primary)] hover:text-[var(--text-primary)] transition-colors py-1 px-2 border border-[var(--accent-primary)]/40 hover:border-[var(--accent-primary)] bg-[var(--accent-primary)]/10 cursor-pointer"
               >
                 <RotateCcw className="w-3 h-3" />
                 <span>RESET FILTERS</span>
@@ -259,7 +259,7 @@ export const CollectionGallery: React.FC<CollectionGalleryProps> = ({
 
           {/* Row 2: Secondary Theme & Concept Classification Tags */}
           <div className="pt-3 border-t hairline-border flex flex-wrap items-center gap-2 text-[10px] font-sans-clean uppercase tracking-widest">
-            <span className="font-mono text-[#767468] mr-2 shrink-0">
+            <span className="font-mono text-[var(--text-muted)] mr-2 shrink-0">
               THEMES & CONCEPTS:
             </span>
             {availableThemes.map((theme) => {
@@ -271,8 +271,8 @@ export const CollectionGallery: React.FC<CollectionGalleryProps> = ({
                   onClick={() => setSelectedTheme(theme)}
                   className={`px-2.5 py-1 border transition-all duration-200 cursor-pointer ${
                     isActive
-                      ? 'border-[#8C8E58] bg-[#8C8E58]/20 text-[#D4CE82] font-semibold'
-                      : 'border-white/5 text-[#767468] hover:text-[#A5A396] hover:border-white/20 bg-black/20'
+                      ? 'border-[var(--accent-primary)] bg-[var(--accent-primary)]/20 text-[var(--accent-primary)] font-semibold'
+                      : 'border hairline-border text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--accent-primary)] bg-[var(--bg-chip)]'
                   }`}
                 >
                   {theme}
@@ -285,17 +285,17 @@ export const CollectionGallery: React.FC<CollectionGalleryProps> = ({
 
       {/* GALLERY GRID OR EMPTY NOTIFICATION */}
       {filteredTracks.length === 0 ? (
-        <div className="py-20 px-8 text-center border border-dashed border-white/15 bg-[#141612] my-8 space-y-4">
-          <Filter className="w-8 h-8 text-[#8C8E58] mx-auto opacity-70" />
-          <h3 className="font-serif-editorial text-2xl text-[#F5F3EC]">
+        <div className="py-20 px-8 text-center border border-dashed hairline-border bg-[var(--bg-surface)] my-8 space-y-4">
+          <Filter className="w-8 h-8 text-[var(--accent-primary)] mx-auto opacity-70" />
+          <h3 className="font-heading-jost text-2xl text-[var(--text-primary)]">
             No Archival Pieces Found
           </h3>
-          <p className="font-sans-clean text-sm text-[#A5A396] max-w-md mx-auto">
-            No compositions match the combination of <span className="text-[#D4CE82]">Language: {selectedLanguage}</span>, <span className="text-[#D4CE82]">Content Type: {selectedContentType}</span>, and <span className="text-[#D4CE82]">Theme: {selectedTheme}</span>.
+          <p className="font-sans-clean text-sm text-[var(--text-secondary)] max-w-md mx-auto">
+            No compositions match the combination of <span className="text-[var(--accent-primary)]">Language: {selectedLanguage}</span>, <span className="text-[var(--accent-primary)]">Content Type: {selectedContentType}</span>, and <span className="text-[var(--accent-primary)]">Theme: {selectedTheme}</span>.
           </p>
           <button
             onClick={resetAllFilters}
-            className="inline-flex items-center gap-2 px-4 py-2 border border-[#8C8E58] bg-[#8C8E58] text-[#10110E] font-semibold text-xs tracking-wider uppercase hover:bg-[#a1a466] transition-colors cursor-pointer"
+            className="inline-flex items-center gap-2 px-4 py-2 border border-[var(--accent-primary)] bg-[var(--accent-primary)] text-[#FFFFFF] dark:text-[#10110E] font-semibold text-xs tracking-wider uppercase hover:opacity-90 transition-opacity cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Reset All Classification Filters</span>
@@ -333,23 +333,27 @@ export const CollectionGallery: React.FC<CollectionGalleryProps> = ({
               >
                 {/* Artwork Frame */}
                 <div
-                  className={`relative border p-3 bg-[#181A15] shadow-lg transition-all duration-500 ${
+                  className={`relative border p-3 bg-[var(--bg-surface)] shadow-lg transition-all duration-500 ${
                     isCurrent
-                      ? 'border-[#8C8E58] ring-1 ring-[#8C8E58]/50'
-                      : 'border-white/15 group-hover:border-[#8C8E58] group-hover:shadow-2xl'
+                      ? 'border-[var(--accent-primary)] ring-1 ring-[var(--accent-primary)]/50'
+                      : 'hairline-border group-hover:border-[var(--accent-primary)] group-hover:shadow-2xl'
                   }`}
                 >
                   {/* Image Container with Custom Aspect Ratio */}
-                  <div className={`w-full ${aspectClass} overflow-hidden bg-black/40 relative`}>
+                  <div className={`w-full ${aspectClass} overflow-hidden bg-black/40 relative flex items-center justify-center`}>
                     <img
                       src={track.artwork}
                       alt={track.title}
+                      onError={(e) => {
+                        console.error('[ARTWORK LOAD FAILED]', track.slug, track.artwork);
+                        (e.target as HTMLElement).style.display = 'none';
+                      }}
                       className="w-full h-full object-cover grayscale-[25%] group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
                     />
 
                     {/* Audio Playing Glow & Spectral Indicator */}
                     {isTrackPlaying && (
-                      <div className="absolute inset-0 bg-[#8C8E58]/20 backdrop-blur-[1px] flex items-center justify-center pointer-events-none">
+                      <div className="absolute inset-0 bg-[var(--accent-primary)]/20 backdrop-blur-[1px] flex items-center justify-center pointer-events-none">
                         <div className="w-3/4 h-12">
                           <AudioVisualizer mode="spectral-bars" height={40} accentColor="#EDE686" />
                         </div>
@@ -357,10 +361,10 @@ export const CollectionGallery: React.FC<CollectionGalleryProps> = ({
                     )}
 
                     {/* Overlay Quick Actions */}
-                    <div className="absolute inset-0 bg-[#10110E]/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
+                    <div className="absolute inset-0 bg-[var(--bg-main)]/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
                       <button
                         onClick={() => onPlayTrack(track)}
-                        className="px-4 py-2.5 bg-[#F5F3EC] text-[#10110E] hover:bg-[#8C8E58] hover:text-[#10110E] transition-colors flex items-center gap-2 text-xs uppercase font-sans-clean font-semibold tracking-wider shadow-lg cursor-pointer"
+                        className="px-4 py-2.5 bg-[var(--btn-primary-bg)] text-[var(--btn-primary-text)] hover:opacity-90 transition-opacity flex items-center gap-2 text-xs uppercase font-sans-clean font-semibold tracking-wider shadow-lg cursor-pointer"
                       >
                         {isTrackPlaying ? (
                           <>
@@ -377,7 +381,7 @@ export const CollectionGallery: React.FC<CollectionGalleryProps> = ({
 
                       <button
                         onClick={() => onOpenLyrics(track)}
-                        className="px-3.5 py-2.5 bg-[#181A15] border border-white/20 text-[#F5F3EC] hover:bg-[#8C8E58] hover:text-[#10110E] hover:border-[#8C8E58] transition-colors flex items-center gap-1.5 text-xs uppercase font-sans-clean font-semibold tracking-wider shadow-lg cursor-pointer"
+                        className="px-3.5 py-2.5 bg-[var(--bg-chip)] border hairline-border text-[var(--text-primary)] hover:bg-[var(--accent-primary)] hover:text-[#FFFFFF] dark:hover:text-[#10110E] hover:border-[var(--accent-primary)] transition-colors flex items-center gap-1.5 text-xs uppercase font-sans-clean font-semibold tracking-wider shadow-lg cursor-pointer"
                       >
                         <span>LYRICS & ART</span>
                         <ArrowUpRight className="w-3.5 h-3.5" />
@@ -385,7 +389,7 @@ export const CollectionGallery: React.FC<CollectionGalleryProps> = ({
                     </div>
 
                     {/* Corner Badge */}
-                    <div className="absolute bottom-2.5 left-2.5 text-[9px] font-mono tracking-widest text-[#F5F3EC] bg-[#10110E]/80 px-2 py-0.5 border border-white/20 backdrop-blur-sm">
+                    <div className="absolute bottom-2.5 left-2.5 text-[9px] font-mono tracking-widest text-[var(--text-primary)] bg-[var(--bg-main)]/80 px-2 py-0.5 border hairline-border backdrop-blur-sm">
                       ARTIFACT_{track.number}.JPG
                     </div>
                   </div>
@@ -393,15 +397,15 @@ export const CollectionGallery: React.FC<CollectionGalleryProps> = ({
                   {/* Sub-Frame Metadata Row: Content Type, Language & Musical Specs */}
                   <div className="pt-4 pb-1 flex justify-between items-baseline font-sans-clean border-t hairline-border mt-3">
                     <div className="flex items-center gap-2">
-                      <span className="font-mono text-xs text-[#8C8E58] font-semibold">
+                      <span className="font-mono text-xs text-[var(--accent-primary)] font-semibold">
                         {track.number} / {totalExhibitedCount}
                       </span>
-                      <span className="text-[9px] font-mono uppercase tracking-wider text-[#A5A396] px-1.5 py-0.5 border border-white/10 bg-white/5">
+                      <span className="text-[9px] font-mono uppercase tracking-wider text-[var(--text-secondary)] px-1.5 py-0.5 border hairline-border bg-[var(--bg-chip)]">
                         {languageTag}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-3 text-[10px] uppercase tracking-widest text-[#767468]">
+                    <div className="flex items-center gap-3 text-[10px] uppercase tracking-widest text-[var(--text-muted)]">
                       <span>{track.genre[0]}</span>
                       <span>•</span>
                       <span className="font-mono">{track.bpm || track.tempo} BPM</span>
@@ -414,22 +418,22 @@ export const CollectionGallery: React.FC<CollectionGalleryProps> = ({
                   <div className="flex justify-between items-start gap-3">
                     <h3
                       onClick={() => onOpenLyrics(track)}
-                      className="font-serif-editorial text-2xl sm:text-3xl text-[#F5F3EC] font-medium tracking-tight cursor-pointer hover:text-[#8C8E58] transition-colors"
+                      className="font-heading-jost text-2xl sm:text-3xl text-[var(--text-primary)] font-medium tracking-tight cursor-pointer hover:text-[var(--accent-primary)] transition-colors"
                     >
                       {track.title}
                     </h3>
-                    <span className="text-[10px] uppercase font-sans-clean tracking-widest text-[#D4CE82] font-semibold px-2 py-0.5 border border-[#8C8E58]/30 bg-[#8C8E58]/15 shrink-0">
+                    <span className="text-[10px] uppercase font-sans-clean tracking-widest text-[var(--accent-primary)] font-semibold px-2 py-0.5 border border-[var(--accent-primary)]/30 bg-[var(--accent-primary)]/15 shrink-0">
                       {track.concept}
                     </span>
                   </div>
 
                   {track.subtitle && (
-                    <p className="font-serif-editorial italic text-sm text-[#A5A396]">
+                    <p className="font-subtitle-outfit text-sm text-[var(--text-secondary)]">
                       {track.subtitle}
                     </p>
                   )}
 
-                  <p className="text-xs text-[#A5A396] font-sans-clean leading-relaxed line-clamp-2 pt-1">
+                  <p className="text-xs text-[var(--text-secondary)] font-sans-clean leading-relaxed line-clamp-2 pt-1">
                     {track.description}
                   </p>
 
@@ -437,15 +441,15 @@ export const CollectionGallery: React.FC<CollectionGalleryProps> = ({
                   <div className="flex items-center gap-4 pt-2 text-[11px] font-sans-clean uppercase tracking-wider">
                     <button
                       onClick={() => onPlayTrack(track)}
-                      className="text-[#F5F3EC] hover:text-[#8C8E58] font-semibold flex items-center gap-1 cursor-pointer"
+                      className="text-[var(--text-primary)] hover:text-[var(--accent-primary)] font-semibold flex items-center gap-1 cursor-pointer"
                     >
                       <span>{isTrackPlaying ? 'Pause Audio' : 'Listen Now'}</span>
                       <Play className="w-2.5 h-2.5 fill-current" />
                     </button>
-                    <span className="text-white/20">/</span>
+                    <span className="opacity-20">/</span>
                     <button
                       onClick={() => onOpenLyrics(track)}
-                      className="text-[#A5A396] hover:text-[#F5F3EC] flex items-center gap-1 cursor-pointer"
+                      className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] flex items-center gap-1 cursor-pointer"
                     >
                       <span>Synchronized Lyrics</span>
                       <ArrowUpRight className="w-2.5 h-2.5" />

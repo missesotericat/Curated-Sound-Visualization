@@ -46,6 +46,7 @@ export const ImmersivePlayer: React.FC<ImmersivePlayerProps> = ({
   const [selectedLearningItem, setSelectedLearningItem] = useState<LyricLearningItem | null>(null);
   const [showDetailDrawer, setShowDetailDrawer] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   // Subscribe to persistent audio engine
   useEffect(() => {
@@ -66,7 +67,8 @@ export const ImmersivePlayer: React.FC<ImmersivePlayerProps> = ({
   useEffect(() => {
     let isMounted = true;
     setImgLoaded(false);
-    const trackSecs = parseDurationToSeconds(track.duration, duration || 240);
+    setImgError(false);
+    const trackSecs = parseDurationToSeconds(track.duration, 240);
     fetchTrackLyrics(track.slug, trackSecs).then((doc) => {
       if (isMounted) {
         setLyrics(doc);
@@ -76,7 +78,7 @@ export const ImmersivePlayer: React.FC<ImmersivePlayerProps> = ({
     return () => {
       isMounted = false;
     };
-  }, [track.slug, track.duration, duration]);
+  }, [track.slug]);
 
   const currentIndex = allTracks.findIndex((t) => t.id === track.id);
 
@@ -110,136 +112,169 @@ export const ImmersivePlayer: React.FC<ImmersivePlayerProps> = ({
   const playbackRatio = duration > 0 ? currentTime / duration : 0;
 
   return (
-    <div className="min-h-screen w-full bg-[#10110E] text-[#F5F3EC] flex flex-col relative overflow-hidden font-sans-clean select-none">
+    <div className="min-h-screen w-full bg-[var(--bg-main)] text-[var(--text-primary)] flex flex-col relative overflow-hidden font-sans-clean select-none transition-colors duration-300">
       {/* Top Header */}
-      <header className="fixed top-0 left-0 w-full z-40 px-6 md:px-16 py-6 flex justify-between items-center bg-[#10110E]/85 backdrop-blur-md border-b hairline-border">
+      <header className="fixed top-0 left-0 w-full z-40 px-6 md:px-16 py-6 flex justify-between items-center bg-[var(--bg-main)]/85 backdrop-blur-md border-b hairline-border">
         {/* Back to collection */}
         <button
           onClick={onBack}
-          className="group flex items-center gap-2 text-xs uppercase tracking-widest font-sans-clean font-medium text-[#F5F3EC] hover:text-[#8C8E58] transition-colors"
+          className="group flex items-center gap-2 text-xs uppercase tracking-widest font-sans-clean font-medium text-[var(--text-primary)] hover:text-[var(--accent-primary)] transition-colors"
         >
           <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
           <span>BACK TO COLLECTION</span>
         </button>
 
         {/* Center Pill / Mode Indicator */}
-        <div className="hidden md:flex items-center gap-3 text-[11px] font-sans-clean uppercase tracking-widest text-[#A5A396]">
-          <span className="px-2.5 py-0.5 border border-white/15 bg-[#181A15] text-[#F5F3EC]">
+        <div className="hidden md:flex items-center gap-3 text-[11px] font-sans-clean uppercase tracking-widest text-[var(--text-secondary)]">
+          <span className="px-2.5 py-0.5 border hairline-border bg-[var(--bg-chip)] text-[var(--text-primary)]">
             EXHIBIT {track.number} OF 06
           </span>
           {isLoading && (
-            <span className="inline-flex items-center gap-1.5 text-[10px] text-[#8C8E58] bg-[#8C8E58]/10 px-2 py-0.5 border border-[#8C8E58]/20 animate-pulse">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#8C8E58]"></span>
+            <span className="inline-flex items-center gap-1.5 text-[10px] text-[var(--accent-primary)] bg-[var(--accent-primary)]/10 px-2 py-0.5 border border-[var(--accent-primary)]/20 animate-pulse">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-primary)]"></span>
               <span>LOADING AUDIO SOURCE</span>
             </span>
           )}
         </div>
 
         {/* Trailing action: Languages & Info */}
-        <div className="flex items-center gap-4 text-xs tracking-widest font-sans-clean text-[#A5A396]">
+        <div className="flex items-center gap-4 text-xs tracking-widest font-sans-clean text-[var(--text-secondary)]">
           <button
             onClick={() => setShowDetailDrawer(!showDetailDrawer)}
             className={`flex items-center gap-1.5 px-2.5 py-1 transition-all text-[11px] uppercase border ${
               showDetailDrawer
-                ? 'bg-[#8C8E58] text-[#10110E] border-[#8C8E58] font-semibold'
-                : 'border-white/15 text-[#A5A396] hover:border-[#8C8E58] hover:text-[#F5F3EC] bg-[#181A15]'
+                ? 'bg-[var(--accent-primary)] text-[#FFFFFF] dark:text-[#10110E] border-[var(--accent-primary)] font-semibold'
+                : 'border hairline-border text-[var(--text-secondary)] hover:border-[var(--accent-primary)] hover:text-[var(--text-primary)] bg-[var(--bg-chip)]'
             }`}
           >
             <Info className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">{showDetailDrawer ? 'VIEW LYRICS' : 'CATALOG NOTES'}</span>
           </button>
           <span className="opacity-30">|</span>
-          <span className="text-[#8C8E58] font-semibold">{track.language}</span>
+          <span className="text-[var(--accent-primary)] font-semibold">{track.language}</span>
         </div>
       </header>
 
       {/* Main Exhibition Stage: 42% Artwork/Visualizer + 58% Lyrics or Full Notes */}
       <main className="flex-1 w-full flex flex-col md:flex-row pt-20 md:pt-24 pb-28 md:pb-32 px-6 md:px-16 max-w-7xl mx-auto items-stretch gap-8 md:gap-12 min-h-0">
-        {/* Left Column: Framed Artwork & Visualizer (42% width) — Always Active and Audio-Reactive */}
+        {/* Left Column: Framed Artwork & Compact Disc Visualizer (42% width) */}
         <section className="w-full md:w-[42%] flex flex-col justify-center items-center relative">
           <div className="w-full max-w-md flex flex-col items-center">
-            {/* Artwork Container with Hairline Border and Gallery Treatment */}
-            <div className={`w-full aspect-square relative border p-3 bg-[#181A15] shadow-2xl transition-all duration-500 group ${
-              showDetailDrawer ? 'border-[#8C8E58]/40 ring-1 ring-[#8C8E58]/20' : 'border-white/15'
-            }`}>
-              <div className="w-full h-full relative overflow-hidden bg-black/50">
-                <img
-                  src={track.artwork}
-                  alt={track.title}
-                  onLoad={() => setImgLoaded(true)}
-                  className={`w-full h-full object-cover transition-all duration-1000 ${
-                    imgLoaded ? 'grayscale-[15%] group-hover:grayscale-0 opacity-100 scale-100' : 'opacity-0 scale-95'
-                  }`}
-                  onError={(e) => {
-                    (e.target as HTMLElement).style.display = 'none';
-                  }}
-                />
+            {/* 1:1 Square Frosted Glass Outer Enclosure with Museum Treatment */}
+            <div
+              className={`w-full aspect-square relative p-6 sm:p-8 bg-[var(--bg-surface)] backdrop-blur-xl border shadow-2xl transition-all duration-500 flex items-center justify-center overflow-hidden ${
+                showDetailDrawer
+                  ? 'border-[var(--accent-primary)]/40 ring-1 ring-[var(--accent-primary)]/20'
+                  : 'hairline-border hover:border-[var(--accent-primary)]/50'
+              }`}
+            >
+              {/* LAYER 1: Subtle Grid Background / Ambient Field */}
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(140,142,88,0.06)_0%,transparent_70%)] pointer-events-none" />
 
-                {/* Fine Organic Waveform Ring Overlay when in Organic Mode */}
-                {visualizerMode === 'organic-ring' && (
-                  <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-                    <AudioVisualizer
-                      mode="organic-ring"
-                      height="100%"
-                      accentColor="#8C8E58"
-                    />
-                  </div>
-                )}
+              {/* LAYER 2 & 5: Rotating Compact Disc / Optical Object Graphic */}
+              <div
+                className="w-full h-full relative flex items-center justify-center animate-cd-spin transition-transform duration-700"
+                style={{
+                  animationPlayState: isPlaying ? 'running' : 'paused'
+                }}
+              >
+                {/* Optical Disc Outer Rim & Grooves */}
+                <div className="absolute inset-0 rounded-full border hairline-border bg-[#121310] shadow-[0_0_30px_rgba(0,0,0,0.8)] overflow-hidden">
+                  {/* Subtle iridescent radial sheen */}
+                  <div className="absolute inset-0 rounded-full bg-[conic-gradient(from_0deg,transparent_0deg,rgba(241,234,138,0.04)_60deg,transparent_120deg,rgba(201,220,233,0.06)_180deg,transparent_240deg,rgba(100,102,49,0.05)_300deg,transparent_360deg)]" />
 
-                {/* Badge Overlay */}
-                <div className="absolute bottom-3 left-3 text-[10px] font-mono tracking-widest text-[#F5F3EC] bg-[#10110E]/90 backdrop-blur-md px-2.5 py-1 border border-white/20">
-                  TRACK_{track.number}.WAV
+                  {/* Concentric Grooves */}
+                  <div className="absolute inset-2 rounded-full border border-white/5 pointer-events-none" />
+                  <div className="absolute inset-5 rounded-full border border-white/5 pointer-events-none" />
+                  <div className="absolute inset-8 rounded-full border border-dashed border-white/10 pointer-events-none" />
+                  <div className="absolute inset-12 rounded-full border border-white/5 pointer-events-none" />
+                  <div className="absolute inset-16 rounded-full border border-white/5 pointer-events-none" />
                 </div>
 
-                {/* Live sound indicator */}
-                {isPlaying && (
-                  <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-[#8C8E58] text-[#10110E] text-[9px] font-mono px-2 py-0.5 tracking-wider uppercase font-semibold">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#10110E] animate-ping"></span>
-                    <span>LIVE</span>
+                {/* LAYER 3: 1:1 Circular Featured Artwork (Inner Core) */}
+                <div className="relative w-[62%] h-[62%] rounded-full overflow-hidden border-2 border-white/20 shadow-2xl bg-black/70 z-10 flex items-center justify-center">
+                  {!imgError ? (
+                    <img
+                      key={track.slug}
+                      src={track.artwork}
+                      alt={track.title}
+                      onLoad={() => setImgLoaded(true)}
+                      onError={() => {
+                        console.error('[ARTWORK LOAD FAILED]', track.slug, track.artwork);
+                        setImgError(true);
+                      }}
+                      className="w-full h-full object-cover grayscale-[10%] hover:grayscale-0 transition-all duration-700"
+                    />
+                  ) : (
+                    /* Subtle Exhibition Artwork Fallback */
+                    <div className="w-full h-full flex flex-col items-center justify-center p-4 text-center bg-[var(--bg-chip)] text-[var(--text-secondary)]">
+                      <div className="w-8 h-8 rounded-full border border-[var(--accent-primary)]/40 flex items-center justify-center text-[var(--accent-primary)] font-mono text-[10px] mb-1">
+                        {track.number}
+                      </div>
+                      <span className="font-serif-editorial text-xs text-[var(--text-primary)] leading-tight line-clamp-2">
+                        {track.title}
+                      </span>
+                      <span className="text-[8px] font-mono tracking-widest text-[var(--text-muted)] mt-1 uppercase">
+                        EXHIBIT ARCHIVE
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Center Spindle Hole / Optical Hub */}
+                  <div className="absolute inset-0 m-auto w-7 h-7 rounded-full bg-[#10110E] border-2 border-white/30 shadow-[inset_0_0_8px_rgba(0,0,0,0.9)] flex items-center justify-center z-20 pointer-events-none">
+                    <div className="w-2 h-2 rounded-full bg-[#1A1C16] border border-white/20" />
                   </div>
-                )}
+                </div>
               </div>
+
+              {/* LAYER 4: Frosted Glass Overlay Ring / Museum Casing */}
+              <div className="absolute inset-3 sm:inset-4 rounded-full border border-white/10 pointer-events-none shadow-[inset_0_0_20px_rgba(255,255,255,0.03)]" />
+
+              {/* Exhibition Badge */}
+              <div className="absolute bottom-3 left-4 text-[9px] font-mono tracking-widest text-[var(--text-primary)] bg-[var(--bg-main)]/90 backdrop-blur-md px-2.5 py-1 border hairline-border z-20">
+                ARTIFACT_{track.number}.CD
+              </div>
+
+              {/* Live Status Indicator */}
+              {isPlaying && (
+                <div className="absolute top-3 right-4 flex items-center gap-1.5 bg-[var(--accent-primary)] text-[#FFFFFF] dark:text-[#10110E] text-[9px] font-mono px-2 py-0.5 tracking-wider uppercase font-semibold z-20 shadow-md">
+                  <span className="w-1.5 h-1.5 rounded-full bg-current animate-ping" />
+                  <span>LIVE</span>
+                </div>
+              )}
             </div>
 
-            {/* Sub-Artwork Quick Controls */}
-            <div className="w-full flex justify-between items-center mt-4 text-[11px] font-sans-clean text-[#A5A396]">
+            {/* Sub-Artwork Quick Controls: Spectral & Waves Only */}
+            <div className="w-full flex justify-between items-center mt-4 text-[11px] font-sans-clean text-[var(--text-secondary)]">
               <div className="flex items-center gap-2">
-                <span className="text-[10px] uppercase tracking-widest text-[#8C8E58] font-semibold">VISUALIZER:</span>
+                <span className="text-[10px] uppercase tracking-widest text-[var(--accent-primary)] font-semibold">
+                  VISUALIZER:
+                </span>
                 <button
                   onClick={() => setVisualizerMode('spectral-bars')}
-                  className={`px-2 py-0.5 text-[10px] uppercase border transition-colors ${
+                  className={`px-2.5 py-1 text-[10px] uppercase border transition-colors ${
                     visualizerMode === 'spectral-bars'
-                      ? 'border-[#8C8E58] text-[#8C8E58] bg-[#8C8E58]/15 font-medium'
-                      : 'border-transparent text-[#767468] hover:text-[#F5F3EC]'
+                      ? 'border-[var(--accent-primary)] text-[var(--accent-primary)] bg-[var(--accent-primary)]/15 font-medium'
+                      : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]'
                   }`}
                 >
                   Spectral
                 </button>
                 <button
                   onClick={() => setVisualizerMode('fine-frequencies')}
-                  className={`px-2 py-0.5 text-[10px] uppercase border transition-colors ${
+                  className={`px-2.5 py-1 text-[10px] uppercase border transition-colors ${
                     visualizerMode === 'fine-frequencies'
-                      ? 'border-[#8C8E58] text-[#8C8E58] bg-[#8C8E58]/15 font-medium'
-                      : 'border-transparent text-[#767468] hover:text-[#F5F3EC]'
+                      ? 'border-[var(--accent-primary)] text-[var(--accent-primary)] bg-[var(--accent-primary)]/15 font-medium'
+                      : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]'
                   }`}
                 >
                   Waves
-                </button>
-                <button
-                  onClick={() => setVisualizerMode('organic-ring')}
-                  className={`px-2 py-0.5 text-[10px] uppercase border transition-colors ${
-                    visualizerMode === 'organic-ring'
-                      ? 'border-[#8C8E58] text-[#8C8E58] bg-[#8C8E58]/15 font-medium'
-                      : 'border-transparent text-[#767468] hover:text-[#F5F3EC]'
-                  }`}
-                >
-                  Ring
                 </button>
               </div>
 
               <button
                 onClick={() => setShowDetailDrawer(!showDetailDrawer)}
-                className="text-[10px] uppercase tracking-wider text-[#8C8E58] hover:underline flex items-center gap-1 font-medium"
+                className="text-[10px] uppercase tracking-wider text-[var(--accent-primary)] hover:underline flex items-center gap-1 font-medium"
               >
                 <span>{showDetailDrawer ? 'View Lyrics' : 'Full Notes'}</span>
                 <Info className="w-3 h-3" />
@@ -262,23 +297,23 @@ export const ImmersivePlayer: React.FC<ImmersivePlayerProps> = ({
               {/* Metadata Cluster */}
               <div className="flex justify-between items-start mb-3 shrink-0">
                 <div>
-                  <h1 className="font-serif-editorial text-3xl md:text-5xl text-[#F5F3EC] tracking-tight leading-tight">
+                  <h1 className="font-heading-jost text-3xl md:text-5xl text-[var(--text-primary)] tracking-tight leading-tight">
                     {track.title}
                   </h1>
                   {track.subtitle && (
-                    <p className="font-serif-editorial italic text-[#D4CE82] text-base md:text-lg mt-1.5">
+                    <p className="font-subtitle-outfit text-[var(--accent-primary)] text-base md:text-lg mt-1.5">
                       {track.subtitle}
                     </p>
                   )}
                 </div>
 
                 {/* Top Right Label Block */}
-                <div className="text-right flex flex-col items-end gap-1 font-sans-clean text-[10px] uppercase tracking-widest text-[#767468]">
-                  <div className="border border-white/15 px-3 py-1 font-mono text-xs text-[#F5F3EC] font-semibold bg-[#181A15]">
+                <div className="text-right flex flex-col items-end gap-1 font-sans-clean text-[10px] uppercase tracking-widest text-[var(--text-muted)]">
+                  <div className="border hairline-border px-3 py-1 font-mono text-xs text-[var(--text-primary)] font-semibold bg-[var(--bg-chip)]">
                     {track.number}/06
                   </div>
-                  <div className="text-[#8C8E58] font-semibold">{track.genre[0]}</div>
-                  <div className="opacity-70 font-mono text-[#A5A396]">{track.bpm} BPM</div>
+                  <div className="text-[var(--accent-primary)] font-semibold">{track.genre[0]}</div>
+                  <div className="opacity-70 font-mono text-[var(--text-secondary)]">{track.bpm} BPM</div>
                 </div>
               </div>
 
@@ -322,17 +357,17 @@ export const ImmersivePlayer: React.FC<ImmersivePlayerProps> = ({
       </main>
 
       {/* Fixed Bottom Exhibition Audio Controller & Spectral Waveform */}
-      <footer className="fixed bottom-0 left-0 w-full bg-[#131511]/95 backdrop-blur-xl border-t border-white/15 flex flex-col z-50 shadow-2xl">
+      <footer className="fixed bottom-0 left-0 w-full bg-[var(--player-bar-bg)] backdrop-blur-xl border-t hairline-border flex flex-col z-50 shadow-2xl">
         {/* Live Reactive Waveform Scrubber */}
         <div className="w-full relative group">
           <AudioVisualizer
-            mode={visualizerMode === 'organic-ring' ? 'fine-frequencies' : visualizerMode}
+            mode={visualizerMode}
             height={44}
-            accentColor="#8C8E58"
+            accentColor="currentColor"
             interactive={true}
             onSeek={handleScrubberSeek}
             playbackRatio={playbackRatio}
-            className="w-full bg-[#161814]/80"
+            className="w-full bg-[var(--bg-surface)]/80"
           />
 
           {/* Precision Scrubber Line */}
@@ -345,12 +380,12 @@ export const ImmersivePlayer: React.FC<ImmersivePlayerProps> = ({
             }}
           >
             <div
-              className="absolute top-0 left-0 h-full bg-[#8C8E58] transition-all duration-100 ease-linear"
+              className="absolute top-0 left-0 h-full bg-[var(--accent-primary)] transition-all duration-100 ease-linear"
               style={{ width: `${playbackRatio * 100}%` }}
             ></div>
             {/* Playhead Diamond */}
             <div
-              className="absolute top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-[#EDE686] border border-[#10110E] shadow-md pointer-events-none -ml-1.5"
+              className="absolute top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-[var(--accent-highlight)] border border-[#10110E] shadow-md pointer-events-none -ml-1.5"
               style={{ left: `${playbackRatio * 100}%` }}
             ></div>
           </div>
@@ -359,7 +394,7 @@ export const ImmersivePlayer: React.FC<ImmersivePlayerProps> = ({
         {/* Controls Bar Container */}
         <div className="flex justify-between items-center w-full px-6 md:px-16 py-3.5">
           {/* Elapsed & Duration time */}
-          <div className="font-mono text-xs tabular-nums tracking-wider text-[#A5A396] w-32">
+          <div className="font-mono text-xs tabular-nums tracking-wider text-[var(--text-secondary)] w-32">
             {formatTime(currentTime)} / {formatTime(duration)}
           </div>
 
@@ -367,7 +402,7 @@ export const ImmersivePlayer: React.FC<ImmersivePlayerProps> = ({
           <div className="flex items-center gap-6 md:gap-8">
             <button
               onClick={handlePrev}
-              className="text-[#A5A396] hover:text-[#8C8E58] transition-colors p-1.5"
+              className="text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors p-1.5"
               title="Previous Track"
             >
               <SkipBack className="w-5 h-5" />
@@ -376,19 +411,19 @@ export const ImmersivePlayer: React.FC<ImmersivePlayerProps> = ({
             {/* Circular Play/Pause Button */}
             <button
               onClick={() => audioEngine.togglePlay()}
-              className="w-12 h-12 flex items-center justify-center border border-white/20 rounded-full hover:bg-[#8C8E58] hover:border-[#8C8E58] hover:text-[#10110E] transition-all duration-300 group shadow-lg bg-[#F5F3EC] text-[#10110E]"
+              className="w-12 h-12 flex items-center justify-center border hairline-border rounded-full hover:bg-[var(--accent-primary)] hover:border-[var(--accent-primary)] hover:text-[#FFFFFF] dark:hover:text-[#10110E] transition-all duration-300 group shadow-lg bg-[var(--btn-primary-bg)] text-[var(--btn-primary-text)]"
               title={isPlaying ? 'Pause' : 'Play'}
             >
               {isPlaying ? (
                 <Pause className="w-5 h-5 transition-transform group-hover:scale-90" />
               ) : (
-                <Play className="w-5 h-5 ml-0.5 fill-current transition-transform group-hover:scale-95 text-[#10110E]" />
+                <Play className="w-5 h-5 ml-0.5 fill-current transition-transform group-hover:scale-95 text-inherit" />
               )}
             </button>
 
             <button
               onClick={handleNext}
-              className="text-[#A5A396] hover:text-[#8C8E58] transition-colors p-1.5"
+              className="text-[var(--text-secondary)] hover:text-[var(--accent-primary)] transition-colors p-1.5"
               title="Next Track"
             >
               <SkipForward className="w-5 h-5" />
@@ -396,11 +431,11 @@ export const ImmersivePlayer: React.FC<ImmersivePlayerProps> = ({
           </div>
 
           {/* Volume & Auxiliary Actions */}
-          <div className="flex items-center gap-3 md:gap-5 w-36 justify-end text-[#A5A396]">
+          <div className="flex items-center gap-3 md:gap-5 w-36 justify-end text-[var(--text-secondary)]">
             <div className="hidden sm:flex items-center gap-2">
               <button
                 onClick={() => audioEngine.toggleMute()}
-                className="hover:text-[#8C8E58] transition-colors"
+                className="hover:text-[var(--accent-primary)] transition-colors"
                 title={isMuted ? 'Unmute' : 'Mute'}
               >
                 {isMuted ? <VolumeX className="w-4 h-4 text-rose-400" /> : <Volume2 className="w-4 h-4" />}
@@ -412,7 +447,7 @@ export const ImmersivePlayer: React.FC<ImmersivePlayerProps> = ({
                 step="0.01"
                 value={isMuted ? 0 : volume}
                 onChange={(e) => audioEngine.setVolume(parseFloat(e.target.value))}
-                className="w-16 h-1 bg-white/20 accent-[#8C8E58] cursor-pointer"
+                className="w-16 h-1 bg-white/20 accent-[var(--accent-primary)] cursor-pointer"
               />
             </div>
 
@@ -420,8 +455,8 @@ export const ImmersivePlayer: React.FC<ImmersivePlayerProps> = ({
               onClick={() => setShowDetailDrawer(!showDetailDrawer)}
               className={`transition-colors p-1 border ${
                 showDetailDrawer
-                  ? 'border-[#8C8E58] text-[#8C8E58] bg-[#8C8E58]/15'
-                  : 'border-transparent text-[#A5A396] hover:text-[#8C8E58]'
+                  ? 'border-[var(--accent-primary)] text-[var(--accent-primary)] bg-[var(--accent-primary)]/15'
+                  : 'border-transparent text-[var(--text-secondary)] hover:text-[var(--accent-primary)]'
               }`}
               title="Toggle Exhibition Catalog Notes"
             >

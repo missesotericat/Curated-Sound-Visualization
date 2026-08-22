@@ -304,7 +304,7 @@ export const SynchronizedLyricsView: React.FC<SynchronizedLyricsViewProps> = ({
 
   if (!lyrics || !lyrics.sections || lyrics.sections.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center p-16 text-[#A5A396] italic font-sans-clean h-full">
+      <div className="flex flex-col items-center justify-center p-16 text-[var(--text-secondary)] italic font-sans-clean h-full">
         <p className="text-sm tracking-wider uppercase opacity-60">Synchronizing lyrical frequencies...</p>
       </div>
     );
@@ -317,14 +317,14 @@ export const SynchronizedLyricsView: React.FC<SynchronizedLyricsViewProps> = ({
       {/* 1. LYRIC HEADER: Stays fixed/visible at top */}
       <div className="lyric-header shrink-0 pb-3 mb-2 border-b hairline-border">
         {/* Top linguistic mode banner */}
-        <div className="flex justify-between items-center text-[11px] font-sans-clean uppercase tracking-widest text-[#A5A396] mb-3">
+        <div className="flex justify-between items-center text-[11px] font-sans-clean uppercase tracking-widest text-[var(--text-secondary)] mb-3">
           <div className="flex items-center gap-3">
-            <span className="text-[#8C8E58] font-semibold flex items-center gap-1.5 font-mono text-[10px]">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#8C8E58] inline-block animate-pulse"></span>
+            <span className="text-[var(--accent-primary)] font-semibold flex items-center gap-1.5 font-mono text-[10px]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-primary)] inline-block animate-pulse"></span>
               SYNCHRONIZED MANUSCRIPT
             </span>
             <span className="opacity-40">/</span>
-            <span className="text-[#F5F3EC] text-[10px] font-mono tracking-wider">
+            <span className="text-[var(--text-primary)] text-[10px] font-mono tracking-wider">
               {sourceLanguage} &rarr; {targetLanguage}
             </span>
           </div>
@@ -334,8 +334,8 @@ export const SynchronizedLyricsView: React.FC<SynchronizedLyricsViewProps> = ({
               onClick={onToggleLearningMode}
               className={`flex items-center gap-1.5 px-2.5 py-1 text-[10px] tracking-wider transition-all duration-300 border ${
                 showLearningMode
-                  ? 'bg-[#8C8E58] text-[#10110E] border-[#8C8E58] font-semibold'
-                  : 'border-white/15 text-[#A5A396] hover:border-[#8C8E58] hover:text-[#F5F3EC] bg-[#181A15]'
+                  ? 'bg-[var(--accent-primary)] text-[#FFFFFF] dark:text-[#10110E] border-[var(--accent-primary)] font-semibold'
+                  : 'border hairline-border text-[var(--text-secondary)] hover:border-[var(--accent-primary)] hover:text-[var(--text-primary)] bg-[var(--bg-chip)]'
               }`}
               title="Toggle editorial linguistic vocabulary annotations"
             >
@@ -348,21 +348,21 @@ export const SynchronizedLyricsView: React.FC<SynchronizedLyricsViewProps> = ({
         {/* Synchronized Dual Column Semantic Title Labels */}
         <div className="grid grid-cols-2 gap-4 md:gap-8 select-none">
           {/* Left: Original Semantic Label */}
-          <div className="flex flex-col pl-3 border-l-2 border-[#8C8E58]">
-            <span className="text-[11px] font-mono uppercase tracking-widest text-[#F5F3EC] font-bold leading-none">
+          <div className="flex flex-col pl-3 border-l-2 border-[var(--accent-primary)]">
+            <span className="text-[11px] font-mono uppercase tracking-widest text-[var(--text-primary)] font-bold leading-none">
               ORIGINAL
             </span>
-            <span className="text-[9px] font-mono uppercase tracking-wider text-[#8C8E58] mt-1 truncate">
+            <span className="text-[9px] font-mono uppercase tracking-wider text-[var(--accent-primary)] mt-1 truncate">
               {sourceLanguage}
             </span>
           </div>
 
           {/* Right: Translation Semantic Label */}
-          <div className="flex flex-col pl-3 border-l-2 border-[#8C8E58]/40">
-            <span className="text-[11px] font-mono uppercase tracking-widest text-[#A5A396] font-bold leading-none">
+          <div className="flex flex-col pl-3 border-l-2 border-[var(--accent-primary)]/40">
+            <span className="text-[11px] font-mono uppercase tracking-widest text-[var(--text-secondary)] font-bold leading-none">
               TRANSLATION
             </span>
-            <span className="text-[9px] font-mono uppercase tracking-wider text-[#8C8E58]/70 mt-1 truncate">
+            <span className="text-[9px] font-mono uppercase tracking-wider text-[var(--accent-primary)]/70 mt-1 truncate">
               {targetLanguage}
             </span>
           </div>
@@ -392,8 +392,8 @@ export const SynchronizedLyricsView: React.FC<SynchronizedLyricsViewProps> = ({
                   <span
                     className={`text-[10px] uppercase font-mono tracking-widest font-semibold px-2 py-0.5 border transition-all duration-500 ${
                       isSectionActive
-                        ? 'border-[#8C8E58] bg-[#8C8E58]/20 text-[#D4CE82] shadow-[0_0_8px_rgba(140,142,88,0.2)]'
-                        : 'border-white/10 bg-white/5 text-[#A5A396]'
+                        ? 'border-[var(--accent-primary)] bg-[var(--accent-primary)]/20 text-[var(--accent-primary)] shadow-[0_0_8px_rgba(140,142,88,0.2)]'
+                        : 'border hairline-border bg-[var(--bg-chip)] text-[var(--text-secondary)]'
                     }`}
                   >
                     {section.type.replace(/-/g, ' ')}
@@ -402,8 +402,8 @@ export const SynchronizedLyricsView: React.FC<SynchronizedLyricsViewProps> = ({
                   <div
                     className={`flex-1 h-[1px] transition-all duration-500 ${
                       isSectionActive
-                        ? 'bg-gradient-to-r from-[#8C8E58]/60 via-[#8C8E58]/25 to-transparent'
-                        : 'bg-white/5'
+                        ? 'bg-gradient-to-r from-[var(--accent-primary)]/60 via-[var(--accent-primary)]/25 to-transparent'
+                        : 'bg-white/5 dark:bg-white/5'
                     }`}
                   ></div>
                 </div>
@@ -430,7 +430,7 @@ export const SynchronizedLyricsView: React.FC<SynchronizedLyricsViewProps> = ({
                         onClick={() => handleLineClick(line)}
                         className={`group relative transition-all duration-300 ease-out rounded-sm py-2.5 px-3 cursor-pointer select-text ${
                           isActive
-                            ? 'opacity-100 scale-[1.015] bg-[#8C8E58]/12 border-y border-[#8C8E58]/25 z-10'
+                            ? 'opacity-100 scale-[1.015] bg-[var(--accent-primary)]/12 border-y border-[var(--accent-primary)]/25 z-10'
                             : isTimed
                             ? 'opacity-35 scale-100 hover:opacity-75'
                             : 'opacity-50 scale-100 hover:opacity-85'
@@ -438,7 +438,7 @@ export const SynchronizedLyricsView: React.FC<SynchronizedLyricsViewProps> = ({
                       >
                         {/* Active Line Subtle Accent Bar */}
                         {isActive && (
-                          <span className="absolute -left-1 top-1/2 -translate-y-1/2 w-1 h-3.5 rounded-full bg-[#8C8E58] shadow-[0_0_8px_rgba(140,142,88,0.8)]"></span>
+                          <span className="absolute -left-1 top-1/2 -translate-y-1/2 w-1 h-3.5 rounded-full bg-[var(--accent-primary)]"></span>
                         )}
 
                         {/* Guaranteed 2-Column Grid: LEFT (Original), RIGHT (Translation) */}
@@ -447,14 +447,14 @@ export const SynchronizedLyricsView: React.FC<SynchronizedLyricsViewProps> = ({
                           <div
                             className={`border-l-2 pl-3.5 transition-all duration-300 ease-out ${
                               isActive
-                                ? 'border-[#8C8E58] font-serif-editorial text-[19px] md:text-[22px] text-[#F5F3EC] leading-snug font-semibold drop-shadow-sm'
-                                : 'border-white/10 font-sans-clean text-[15px] md:text-[16px] text-[#A5A396] group-hover:text-[#F5F3EC] leading-relaxed'
+                                ? 'border-[var(--accent-primary)] font-subtitle-outfit text-[19px] md:text-[22px] text-[var(--text-primary)] leading-snug font-medium drop-shadow-sm'
+                                : 'border hairline-border border-y-0 border-r-0 font-sans-clean text-[15px] md:text-[16px] text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] leading-relaxed'
                             }`}
                           >
                             <p className="flex items-baseline justify-between gap-2">
                               <span>{line.originalText || line.original}</span>
                               {isTimed && lineStartSec !== null && lineStartSec !== undefined && (
-                                <span className="text-[10px] tabular-nums font-mono opacity-0 group-hover:opacity-60 text-[#767468] ml-2 shrink-0 select-none">
+                                <span className="text-[10px] tabular-nums font-mono opacity-0 group-hover:opacity-60 text-[var(--text-muted)] ml-2 shrink-0 select-none">
                                   {Math.floor(lineStartSec / 60)}:{(lineStartSec % 60).toFixed(0).padStart(2, '0')}
                                 </span>
                               )}
@@ -465,15 +465,15 @@ export const SynchronizedLyricsView: React.FC<SynchronizedLyricsViewProps> = ({
                           <div
                             className={`border-l-2 pl-3.5 transition-all duration-300 ease-out ${
                               isActive
-                                ? 'border-[#8C8E58] font-serif-editorial italic text-[17px] md:text-[20px] text-[#D4CE82] leading-snug font-medium drop-shadow-sm'
-                                : 'border-white/5 font-sans-clean italic text-[14px] md:text-[15px] text-[#767468] group-hover:text-[#A5A396] leading-relaxed'
+                                ? 'border-[var(--accent-primary)] font-subtitle-outfit text-[17px] md:text-[20px] text-[var(--accent-primary)] leading-snug font-normal drop-shadow-sm'
+                                : 'border hairline-border border-y-0 border-r-0 font-sans-clean italic text-[14px] md:text-[15px] text-[var(--text-muted)] group-hover:text-[var(--text-secondary)] leading-relaxed'
                             }`}
                           >
                             <p>
                               {displayTranslation ? (
                                 displayTranslation
                               ) : (
-                                <span className="opacity-30 text-[12px] not-italic font-mono uppercase tracking-wider text-[#767468]">
+                                <span className="opacity-30 text-[12px] not-italic font-mono uppercase tracking-wider text-[var(--text-muted)]">
                                   TRANSLATION UNAVAILABLE
                                 </span>
                               )}
@@ -493,7 +493,7 @@ export const SynchronizedLyricsView: React.FC<SynchronizedLyricsViewProps> = ({
                                     onSelectLearningItem(item);
                                   }
                                 }}
-                                className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 bg-[#8C8E58]/20 text-[#D4CE82] border border-[#8C8E58]/30 hover:bg-[#8C8E58]/40 transition-colors"
+                                className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 bg-[var(--accent-primary)]/20 text-[var(--accent-primary)] border border-[var(--accent-primary)]/30 hover:bg-[var(--accent-primary)]/40 transition-colors"
                               >
                                 <Sparkles className="w-2.5 h-2.5" />
                                 <span className="font-semibold">{item.phrase}</span>
@@ -519,9 +519,9 @@ export const SynchronizedLyricsView: React.FC<SynchronizedLyricsViewProps> = ({
         <div className="absolute bottom-5 right-6 z-30 animate-in fade-in slide-in-from-bottom-2 duration-300 pointer-events-auto">
           <button
             onClick={handleFollowLiveClick}
-            className="flex items-center gap-2 px-3 py-1.5 bg-[#181A15]/95 hover:bg-[#8C8E58] text-[#D4CE82] hover:text-[#10110E] border border-[#8C8E58]/40 hover:border-[#8C8E58] rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.6)] backdrop-blur-md text-[10px] font-mono uppercase tracking-widest transition-all duration-200 group"
+            className="flex items-center gap-2 px-3 py-1.5 bg-[var(--bg-surface)]/95 hover:bg-[var(--accent-primary)] text-[var(--accent-primary)] hover:text-[#FFFFFF] dark:hover:text-[#10110E] border border-[var(--accent-primary)]/40 hover:border-[var(--accent-primary)] rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.6)] backdrop-blur-md text-[10px] font-mono uppercase tracking-widest transition-all duration-200 group"
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-[#8C8E58] group-hover:bg-[#10110E] animate-pulse"></span>
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-primary)] group-hover:bg-current animate-pulse"></span>
             <Radio className="w-3 h-3 opacity-70 group-hover:opacity-100" />
             <span className="font-semibold">FOLLOW LIVE</span>
           </button>

@@ -12,6 +12,18 @@ interface AudioVisualizerProps {
   playbackRatio?: number;
 }
 
+const MAX_BARS = 160;
+const WAVE_POINTS = 80;
+const GROUP_SIZE = 5; // 5 bars per color group
+
+// Exact palette specification
+const GROUP_PALETTE = ['#646631', '#f1ea8a', '#c9dce9'];
+const UNPLAYED_PALETTE = [
+  'rgba(100, 102, 49, 0.32)',
+  'rgba(241, 234, 138, 0.28)',
+  'rgba(201, 220, 233, 0.24)'
+];
+
 export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
   mode = 'spectral-bars',
   height = 48,
@@ -24,6 +36,11 @@ export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const animFrameIdRef = useRef<number | null>(null);
+
+  // Store playbackRatio in a ref so continuous currentTime updates do NOT trigger useEffect re-runs
+  // and do NOT re-instantiate or zero-out the smoothing buffers.
+  const playbackRatioRef = useRef(playbackRatio);
+  playbackRatioRef.current = playbackRatio;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -42,6 +59,7 @@ export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
       canvasHeight = typeof height === 'number' ? height : container.clientHeight || 48;
       canvas.width = width * dpr;
       canvas.height = canvasHeight * dpr;
+      ctx.setTransform(1, 0, 0, 1, 0, 0); // reset transform before re-scaling
       ctx.scale(dpr, dpr);
     };
 
@@ -51,6 +69,12 @@ export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
 
     let phase = 0;
 
+    // Persistent smoothed state buffers across frames
+    const smoothedBars = new Float32Array(MAX_BARS);
+    const peakBars = new Float32Array(MAX_BARS);
+    const peakAlphas = new Float32Array(MAX_BARS);
+    const smoothedWave = new Float32Array(WAVE_POINTS);
+
     const render = () => {
       ctx.clearRect(0, 0, width, canvasHeight);
 
@@ -58,17 +82,39 @@ export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
       const timeData = audioEngine.getTimeDomainData();
       const metrics = audioEngine.getAudioMetrics();
       const isPlaying = audioEngine.getState().isPlaying;
+      const currentPlaybackRatio = playbackRatioRef.current;
 
-      phase += isPlaying ? 0.05 + metrics.energy * 0.05 : 0.015;
+      // Continuous fluid phase with gentle idle drift and subtle energy modulation
+      const phaseDelta = isPlaying ? 0.022 + metrics.energy * 0.03 : 0.008;
+      phase += phaseDelta;
 
-      if (mode === 'spectral-bars') {
-        renderSpectralBars(ctx, width, canvasHeight, freqData, isPlaying, accentColor, playbackRatio, phase);
-      } else if (mode === 'fine-frequencies') {
-        renderFineFrequencies(ctx, width, canvasHeight, timeData, freqData, isPlaying, accentColor, phase);
-      } else if (mode === 'organic-ring') {
-        renderOrganicRing(ctx, width, canvasHeight, freqData, metrics, isPlaying, accentColor, phase);
-      } else if (mode === 'ethereal-particles') {
-        renderEtherealParticles(ctx, width, canvasHeight, freqData, metrics, isPlaying, accentColor, phase);
+      if (mode === 'fine-frequencies' || mode === 'organic-ring') {
+        renderFluidWaves(
+          ctx,
+          width,
+          canvasHeight,
+          timeData,
+          freqData,
+          metrics,
+          isPlaying,
+          phase,
+          smoothedWave
+        );
+      } else {
+        // Default: spectral-bars with grouped 3-color system
+        renderGroupedSpectralBars(
+          ctx,
+          width,
+          canvasHeight,
+          freqData,
+          metrics,
+          isPlaying,
+          currentPlaybackRatio,
+          phase,
+          smoothedBars,
+          peakBars,
+          peakAlphas
+        );
       }
 
       animFrameIdRef.current = requestAnimationFrame(render);
@@ -82,7 +128,7 @@ export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
       }
       observer.disconnect();
     };
-  }, [mode, height, accentColor, playbackRatio]);
+  }, [mode, height, accentColor]);
 
   const handleCanvasClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!interactive || !onSeek || !containerRef.current) return;
@@ -107,173 +153,148 @@ export const AudioVisualizer: React.FC<AudioVisualizerProps> = ({
   );
 };
 
-// Spectral Waveform Bar Renderer (Matches Image 1 reference)
-function renderSpectralBars(
+/**
+ * Smooth Spectral Bars with Grouped 3-Color Pattern (#646631 → #f1ea8a → #c9dce9)
+ * 5 bars per color group, repeating horizontally.
+ * Color remains fixed by bar index while amplitude smoothly animates height.
+ */
+function renderGroupedSpectralBars(
   ctx: CanvasRenderingContext2D,
   width: number,
   height: number,
   freqData: Uint8Array,
+  metrics: { bass: number; energy: number },
   isPlaying: boolean,
-  accentColor: string,
   playbackRatio: number,
-  phase: number
+  phase: number,
+  smoothedBars: Float32Array,
+  peakBars: Float32Array,
+  peakAlphas: Float32Array
 ) {
-  const barCount = Math.min(140, Math.floor(width / 4));
+  const barCount = Math.min(120, Math.max(32, Math.floor(width / 5)));
   const barSpacing = width / barCount;
-  const barWidth = Math.max(1, barSpacing * 0.45);
-
+  const barWidth = Math.max(1.5, barSpacing * 0.52);
   const playedIndex = Math.floor(barCount * playbackRatio);
 
   for (let i = 0; i < barCount; i++) {
-    const dataIdx = Math.floor((i / barCount) * (freqData.length * 0.75));
+    const dataIdx = Math.floor((i / barCount) * (freqData.length * 0.72));
     const rawVal = freqData[dataIdx] || 0;
-    
-    let norm = isPlaying ? rawVal / 255 : 0.08;
-    // Add subtle organic undulating variance
-    norm = Math.max(0.06, norm + Math.sin(phase + i * 0.12) * (isPlaying ? 0.12 : 0.03));
 
-    const barHeight = Math.max(3, norm * (height * 0.92));
+    let targetNorm = isPlaying
+      ? (rawVal / 255) * (0.85 + metrics.energy * 0.2)
+      : 0.05 + Math.sin(phase * 0.6 + i * 0.14) * 0.02;
+
+    // Floor baseline height for delicate resting state
+    targetNorm = Math.max(0.04, targetNorm);
+
+    // Asymmetric Lerp: Attack (0.18 responsive) vs Decay (0.05 slow & smooth, eliminates flashing)
+    const current = smoothedBars[i];
+    const attackFactor = 0.18;
+    const decayFactor = 0.05;
+
+    if (targetNorm > current) {
+      smoothedBars[i] += (targetNorm - current) * attackFactor;
+    } else {
+      smoothedBars[i] += (targetNorm - current) * decayFactor;
+    }
+
+    const norm = smoothedBars[i];
+    const barHeight = Math.max(2.5, norm * (height * 0.90));
     const x = i * barSpacing + (barSpacing - barWidth) / 2;
     const y = height - barHeight;
 
-    const isPast = i <= playedIndex;
+    // Determine fixed group color by bar index
+    const colorGroupIndex = Math.floor(i / GROUP_SIZE) % 3;
+    const isPast = playbackRatio > 0 ? i <= playedIndex : true;
 
     ctx.fillStyle = isPast
-      ? accentColor
-      : 'rgba(17, 18, 15, 0.28)';
+      ? GROUP_PALETTE[colorGroupIndex]
+      : UNPLAYED_PALETTE[colorGroupIndex];
 
     ctx.fillRect(x, y, barWidth, barHeight);
 
-    // Subtle golden peak dot on past bars when energy is high
-    if (isPast && norm > 0.65) {
-      ctx.fillStyle = '#EDE686';
-      ctx.fillRect(x, y - 2, barWidth, 1.5);
+    // Subtle peak tracker
+    if (barHeight > peakBars[i]) {
+      peakBars[i] = barHeight;
+      peakAlphas[i] = 1.0;
+    } else {
+      peakBars[i] -= 0.5; // slow downward gravity
+      peakAlphas[i] = Math.max(0, peakAlphas[i] - 0.015);
+    }
+
+    if (isPast && peakAlphas[i] > 0.05 && peakBars[i] > 5) {
+      const peakY = height - peakBars[i] - 1.5;
+      if (peakY >= 0 && peakY < y - 1) {
+        ctx.fillStyle = `rgba(245, 243, 236, ${peakAlphas[i] * 0.6})`;
+        ctx.fillRect(x, peakY, barWidth, 1.2);
+      }
     }
   }
 }
 
-// Fine Frequency Lines Renderer (Editorial harmonic waves)
-function renderFineFrequencies(
+/**
+ * Fluid Harmonic Waves with Continuous 3-Color Signal Palette (#646631, #f1ea8a, #c9dce9)
+ * Represents continuous physical signals passing through the exhibition archive.
+ */
+function renderFluidWaves(
   ctx: CanvasRenderingContext2D,
   width: number,
   height: number,
   timeData: Uint8Array,
   freqData: Uint8Array,
+  metrics: { bass: number; energy: number },
   isPlaying: boolean,
-  accentColor: string,
-  phase: number
+  phase: number,
+  smoothedWave: Float32Array
 ) {
   const midY = height / 2;
-  const layers = 3;
+  const points = Math.min(WAVE_POINTS, Math.floor(width / 6));
 
-  for (let layer = 0; layer < layers; layer++) {
+  // Update smoothed waveform values
+  for (let i = 0; i <= points; i++) {
+    const dataIdx = Math.floor((i / points) * (timeData.length - 1));
+    const rawTime = isPlaying ? (timeData[dataIdx] - 128) / 128 : 0;
+    const rawFreq = isPlaying ? freqData[dataIdx] / 255 : 0.05;
+
+    const targetVal = rawTime * 0.6 + rawFreq * 0.4;
+    smoothedWave[i] += (targetVal - smoothedWave[i]) * (isPlaying ? 0.18 : 0.06);
+  }
+
+  // 3 Distinct harmonic layers corresponding to the 3 palette colors:
+  // Layer 0: #f1ea8a (primary luminous harmonic)
+  // Layer 1: #646631 (earthy foundation harmonic)
+  // Layer 2: #c9dce9 (silver-blue high harmonic)
+  const layerColors = [
+    '#f1ea8a',
+    '#646631',
+    '#c9dce9'
+  ];
+
+  for (let layer = 0; layer < 3; layer++) {
     ctx.beginPath();
-    ctx.lineWidth = layer === 0 ? 1.5 : 0.8;
-    ctx.strokeStyle = layer === 0
-      ? accentColor
-      : `rgba(100, 102, 49, ${0.4 - layer * 0.12})`;
+    ctx.lineWidth = layer === 0 ? 1.6 : 1.0;
+    ctx.strokeStyle = layerColors[layer];
 
-    const step = width / 64;
-    for (let x = 0; x <= width; x += step) {
-      const idx = Math.floor((x / width) * (timeData.length - 1));
-      const timeVal = isPlaying ? (timeData[idx] - 128) / 128 : 0;
-      const freqVal = isPlaying ? freqData[idx] / 255 : 0.1;
+    const step = width / points;
+    const layerSpeed = 1 + layer * 0.32;
+    const layerAmp = 1 - layer * 0.22;
 
-      const wave = Math.sin(phase * (1 + layer * 0.3) + x * 0.02) * (height * 0.25 * (freqVal + 0.2));
-      const y = midY + wave + timeVal * (height * 0.3);
+    for (let i = 0; i <= points; i++) {
+      const x = i * step;
+      const waveOffset = smoothedWave[i] * (height * 0.32 * layerAmp);
+      const idleSine = Math.sin(phase * layerSpeed + (x / width) * Math.PI * 4 + layer * 1.2) *
+        (height * (isPlaying ? 0.16 + metrics.energy * 0.12 : 0.08) * layerAmp);
 
-      if (x === 0) {
+      const y = midY + idleSine + waveOffset;
+
+      if (i === 0) {
         ctx.moveTo(x, y);
       } else {
-        ctx.lineTo(x, y);
+        const prevX = (i - 1) * step;
+        const cpX = (prevX + x) / 2;
+        ctx.quadraticCurveTo(prevX, y, cpX, y);
       }
     }
     ctx.stroke();
   }
-}
-
-// Organic Breathing Ring (For album hero & modal spotlights)
-function renderOrganicRing(
-  ctx: CanvasRenderingContext2D,
-  width: number,
-  height: number,
-  freqData: Uint8Array,
-  metrics: { bass: number; energy: number },
-  isPlaying: boolean,
-  accentColor: string,
-  phase: number
-) {
-  const centerX = width / 2;
-  const centerY = height / 2;
-  const baseRadius = Math.min(centerX, centerY) * 0.65;
-
-  ctx.save();
-  ctx.translate(centerX, centerY);
-
-  const points = 48;
-  const angleStep = (Math.PI * 2) / points;
-
-  // Outer reactive ring
-  ctx.beginPath();
-  ctx.strokeStyle = accentColor;
-  ctx.lineWidth = 1.2;
-
-  for (let i = 0; i <= points; i++) {
-    const angle = i * angleStep;
-    const dataIdx = Math.floor((i / points) * (freqData.length * 0.5));
-    const val = isPlaying ? freqData[dataIdx] / 255 : 0.08;
-    
-    const displacement = Math.sin(phase + i * 0.4) * 4 + val * (22 * (metrics.bass + 0.5));
-    const r = baseRadius + displacement;
-
-    const x = Math.cos(angle) * r;
-    const y = Math.sin(angle) * r;
-
-    if (i === 0) {
-      ctx.moveTo(x, y);
-    } else {
-      ctx.lineTo(x, y);
-    }
-  }
-  ctx.closePath();
-  ctx.stroke();
-
-  // Subtle interior concentric geometric ring
-  ctx.beginPath();
-  ctx.strokeStyle = 'rgba(17, 18, 15, 0.15)';
-  ctx.lineWidth = 0.8;
-  ctx.arc(0, 0, baseRadius * 0.5 + (isPlaying ? metrics.energy * 8 : 0), 0, Math.PI * 2);
-  ctx.stroke();
-
-  ctx.restore();
-}
-
-// Ethereal Particle Field (Fine architectural light dust)
-function renderEtherealParticles(
-  ctx: CanvasRenderingContext2D,
-  width: number,
-  height: number,
-  _freqData: Uint8Array,
-  metrics: { bass: number; energy: number },
-  isPlaying: boolean,
-  accentColor: string,
-  phase: number
-) {
-  const count = 36;
-  const speed = isPlaying ? 0.8 + metrics.energy * 1.5 : 0.3;
-
-  for (let i = 0; i < count; i++) {
-    const seed = i * 137.5;
-    const x = (Math.sin(seed + phase * 0.2 * speed) * 0.5 + 0.5) * width;
-    const y = (Math.cos(seed * 0.8 + phase * 0.15 * speed) * 0.5 + 0.5) * height;
-    const size = ((i % 3) + 1) * (isPlaying ? 1 + metrics.bass * 0.8 : 1);
-    const alpha = (Math.sin(phase + i) * 0.3 + 0.5) * (isPlaying ? 0.7 : 0.25);
-
-    ctx.fillStyle = i % 4 === 0 ? '#EDE686' : accentColor;
-    ctx.globalAlpha = alpha;
-    ctx.beginPath();
-    ctx.arc(x, y, size, 0, Math.PI * 2);
-    ctx.fill();
-  }
-  ctx.globalAlpha = 1.0;
 }
