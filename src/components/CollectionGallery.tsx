@@ -220,7 +220,7 @@ export const CollectionGallery: React.FC<CollectionGalleryProps> = ({
           {/* Row 1: Content Type Hierarchy */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex flex-wrap items-center gap-2 text-[11px] font-sans-clean uppercase tracking-widest">
-              <span className="text-[10px] font-mono text-[var(--accent-primary)] mr-2 shrink-0 font-semibold">
+              <span className="text-[10px] font-mono text-[var(--accent-primary)] mr-2 shrink-0 font-bold">
                 CONTENT TYPE:
               </span>
               {contentTypes.map((type) => {
@@ -233,8 +233,9 @@ export const CollectionGallery: React.FC<CollectionGalleryProps> = ({
                 return (
                   <button
                     key={type}
+                    type="button"
                     onClick={() => setSelectedContentType(type)}
-                    className={`px-3 py-1.5 text-[11px] border transition-all duration-200 cursor-pointer ${
+                    className={`px-3 py-1.5 text-[11px] border transition-all duration-200 cursor-pointer select-none ${
                       isActive
                         ? 'bg-[var(--accent-primary)] text-[#FFFFFF] dark:text-[#10110E] border-[var(--accent-primary)] font-bold shadow-sm'
                         : 'border hairline-border text-[var(--text-secondary)] hover:border-[var(--accent-primary)] hover:text-[var(--text-primary)] bg-[var(--bg-chip)]'
@@ -248,8 +249,9 @@ export const CollectionGallery: React.FC<CollectionGalleryProps> = ({
 
             {hasActiveFilters && (
               <button
+                type="button"
                 onClick={resetAllFilters}
-                className="self-start sm:self-center flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wider text-[var(--accent-primary)] hover:text-[var(--text-primary)] transition-colors py-1 px-2 border border-[var(--accent-primary)]/40 hover:border-[var(--accent-primary)] bg-[var(--accent-primary)]/10 cursor-pointer"
+                className="self-start sm:self-center flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wider text-[var(--accent-primary)] hover:text-[var(--text-primary)] transition-colors py-1 px-2.5 border border-[var(--accent-primary)]/40 hover:border-[var(--accent-primary)] bg-[var(--accent-primary)]/10 cursor-pointer select-none font-semibold"
               >
                 <RotateCcw className="w-3 h-3" />
                 <span>RESET FILTERS</span>
@@ -259,7 +261,7 @@ export const CollectionGallery: React.FC<CollectionGalleryProps> = ({
 
           {/* Row 2: Secondary Theme & Concept Classification Tags */}
           <div className="pt-3 border-t hairline-border flex flex-wrap items-center gap-2 text-[10px] font-sans-clean uppercase tracking-widest">
-            <span className="font-mono text-[var(--text-muted)] mr-2 shrink-0">
+            <span className="font-mono text-[var(--text-secondary)] mr-2 shrink-0 font-medium">
               THEMES & CONCEPTS:
             </span>
             {availableThemes.map((theme) => {
@@ -268,11 +270,12 @@ export const CollectionGallery: React.FC<CollectionGalleryProps> = ({
               return (
                 <button
                   key={theme}
+                  type="button"
                   onClick={() => setSelectedTheme(theme)}
-                  className={`px-2.5 py-1 border transition-all duration-200 cursor-pointer ${
+                  className={`px-2.5 py-1 border transition-all duration-200 cursor-pointer select-none ${
                     isActive
-                      ? 'border-[var(--accent-primary)] bg-[var(--accent-primary)]/20 text-[var(--accent-primary)] font-semibold'
-                      : 'border hairline-border text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:border-[var(--accent-primary)] bg-[var(--bg-chip)]'
+                      ? 'bg-[var(--accent-primary)] text-[#FFFFFF] dark:text-[#10110E] border-[var(--accent-primary)] font-semibold shadow-sm'
+                      : 'border hairline-border text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--accent-primary)] bg-[var(--bg-chip)]/60'
                   }`}
                 >
                   {theme}

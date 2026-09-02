@@ -386,7 +386,7 @@ export const SynchronizedLyricsView: React.FC<SynchronizedLyricsViewProps> = ({
                   className={`flex items-center gap-3 pt-4 pb-1 transition-all duration-500 ease-out ${
                     isSectionActive
                       ? 'opacity-100 translate-y-0'
-                      : 'opacity-40 hover:opacity-70 translate-y-0.5'
+                      : 'opacity-65 hover:opacity-90 translate-y-0.5'
                   }`}
                 >
                   <span
@@ -403,7 +403,7 @@ export const SynchronizedLyricsView: React.FC<SynchronizedLyricsViewProps> = ({
                     className={`flex-1 h-[1px] transition-all duration-500 ${
                       isSectionActive
                         ? 'bg-gradient-to-r from-[var(--accent-primary)]/60 via-[var(--accent-primary)]/25 to-transparent'
-                        : 'bg-white/5 dark:bg-white/5'
+                        : 'bg-[var(--border-subtle)]'
                     }`}
                   ></div>
                 </div>
@@ -430,10 +430,8 @@ export const SynchronizedLyricsView: React.FC<SynchronizedLyricsViewProps> = ({
                         onClick={() => handleLineClick(line)}
                         className={`group relative transition-all duration-300 ease-out rounded-sm py-2.5 px-3 cursor-pointer select-text ${
                           isActive
-                            ? 'opacity-100 scale-[1.015] bg-[var(--accent-primary)]/12 border-y border-[var(--accent-primary)]/25 z-10'
-                            : isTimed
-                            ? 'opacity-35 scale-100 hover:opacity-75'
-                            : 'opacity-50 scale-100 hover:opacity-85'
+                            ? 'opacity-100 scale-[1.015] bg-[var(--accent-primary)]/15 border-y border-[var(--accent-primary)]/35 z-10 shadow-sm'
+                            : 'opacity-75 scale-100 hover:opacity-100 hover:bg-[var(--bg-chip)]/40'
                         }`}
                       >
                         {/* Active Line Subtle Accent Bar */}
@@ -447,14 +445,14 @@ export const SynchronizedLyricsView: React.FC<SynchronizedLyricsViewProps> = ({
                           <div
                             className={`border-l-2 pl-3.5 transition-all duration-300 ease-out ${
                               isActive
-                                ? 'border-[var(--accent-primary)] font-subtitle-outfit text-[19px] md:text-[22px] text-[var(--text-primary)] leading-snug font-medium drop-shadow-sm'
-                                : 'border hairline-border border-y-0 border-r-0 font-sans-clean text-[15px] md:text-[16px] text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] leading-relaxed'
+                                ? 'border-[var(--accent-primary)] font-subtitle-outfit text-[19px] md:text-[22px] text-[var(--text-primary)] leading-snug font-semibold drop-shadow-sm'
+                                : 'border hairline-border border-y-0 border-r-0 font-sans-clean text-[15px] md:text-[16px] text-[var(--text-primary)]/90 group-hover:text-[var(--text-primary)] leading-relaxed font-normal'
                             }`}
                           >
                             <p className="flex items-baseline justify-between gap-2">
                               <span>{line.originalText || line.original}</span>
                               {isTimed && lineStartSec !== null && lineStartSec !== undefined && (
-                                <span className="text-[10px] tabular-nums font-mono opacity-0 group-hover:opacity-60 text-[var(--text-muted)] ml-2 shrink-0 select-none">
+                                <span className="text-[10px] tabular-nums font-mono opacity-0 group-hover:opacity-75 text-[var(--text-muted)] ml-2 shrink-0 select-none">
                                   {Math.floor(lineStartSec / 60)}:{(lineStartSec % 60).toFixed(0).padStart(2, '0')}
                                 </span>
                               )}
@@ -465,15 +463,15 @@ export const SynchronizedLyricsView: React.FC<SynchronizedLyricsViewProps> = ({
                           <div
                             className={`border-l-2 pl-3.5 transition-all duration-300 ease-out ${
                               isActive
-                                ? 'border-[var(--accent-primary)] font-subtitle-outfit text-[17px] md:text-[20px] text-[var(--accent-primary)] leading-snug font-normal drop-shadow-sm'
-                                : 'border hairline-border border-y-0 border-r-0 font-sans-clean italic text-[14px] md:text-[15px] text-[var(--text-muted)] group-hover:text-[var(--text-secondary)] leading-relaxed'
+                                ? 'border-[var(--accent-primary)] font-subtitle-outfit text-[17px] md:text-[20px] text-[var(--accent-primary)] leading-snug font-medium drop-shadow-sm'
+                                : 'border hairline-border border-y-0 border-r-0 font-sans-clean italic text-[14px] md:text-[15px] text-[var(--text-secondary)] group-hover:text-[var(--text-primary)] leading-relaxed'
                             }`}
                           >
                             <p>
                               {displayTranslation ? (
                                 displayTranslation
                               ) : (
-                                <span className="opacity-30 text-[12px] not-italic font-mono uppercase tracking-wider text-[var(--text-muted)]">
+                                <span className="opacity-50 text-[12px] not-italic font-mono uppercase tracking-wider text-[var(--text-muted)]">
                                   TRANSLATION UNAVAILABLE
                                 </span>
                               )}

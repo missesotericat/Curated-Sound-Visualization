@@ -6,6 +6,7 @@ import { AudioVisualizer } from './AudioVisualizer';
 import { SynchronizedLyricsView } from './SynchronizedLyricsView';
 import { LearnEnglishLayer } from './LearnEnglishLayer';
 import { TrackDetailDrawer } from './TrackDetailDrawer';
+import { SpotifyCta } from './SpotifyCta';
 import {
   ArrowLeft,
   Play,
@@ -137,21 +138,26 @@ export const ImmersivePlayer: React.FC<ImmersivePlayerProps> = ({
           )}
         </div>
 
-        {/* Trailing action: Languages & Info */}
-        <div className="flex items-center gap-4 text-xs tracking-widest font-sans-clean text-[var(--text-secondary)]">
+        {/* Trailing action: Catalog Notes & Spotify */}
+        <div className="flex items-center gap-3 text-xs tracking-widest font-sans-clean text-[var(--text-secondary)]">
           <button
+            type="button"
             onClick={() => setShowDetailDrawer(!showDetailDrawer)}
-            className={`flex items-center gap-1.5 px-2.5 py-1 transition-all text-[11px] uppercase border ${
+            className={`flex items-center gap-1.5 px-2.5 py-1 transition-all text-[11px] uppercase border cursor-pointer select-none ${
               showDetailDrawer
-                ? 'bg-[var(--accent-primary)] text-[#FFFFFF] dark:text-[#10110E] border-[var(--accent-primary)] font-semibold'
+                ? 'bg-[var(--accent-primary)] text-[#FFFFFF] dark:text-[#10110E] border-[var(--accent-primary)] font-semibold shadow-sm'
                 : 'border hairline-border text-[var(--text-secondary)] hover:border-[var(--accent-primary)] hover:text-[var(--text-primary)] bg-[var(--bg-chip)]'
             }`}
           >
             <Info className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">{showDetailDrawer ? 'VIEW LYRICS' : 'CATALOG NOTES'}</span>
           </button>
-          <span className="opacity-30">|</span>
-          <span className="text-[var(--accent-primary)] font-semibold">{track.language}</span>
+          <span className="opacity-30 select-none">|</span>
+          <SpotifyCta
+            spotifyUrl={track.spotifyUrl}
+            trackTitle={track.title}
+            variant="top-nav"
+          />
         </div>
       </header>
 
@@ -244,28 +250,30 @@ export const ImmersivePlayer: React.FC<ImmersivePlayerProps> = ({
               )}
             </div>
 
-            {/* Sub-Artwork Quick Controls: Spectral & Waves Only */}
+            {/* Sub-Artwork Quick Controls: Visualizer Modes & Catalog Notes */}
             <div className="w-full flex justify-between items-center mt-4 text-[11px] font-sans-clean text-[var(--text-secondary)]">
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] uppercase tracking-widest text-[var(--accent-primary)] font-semibold">
+              <div className="flex items-center gap-1.5">
+                <span className="text-[10px] uppercase tracking-widest text-[var(--accent-primary)] font-bold mr-1">
                   VISUALIZER:
                 </span>
                 <button
+                  type="button"
                   onClick={() => setVisualizerMode('spectral-bars')}
-                  className={`px-2.5 py-1 text-[10px] uppercase border transition-colors ${
+                  className={`px-2.5 py-1 text-[10px] uppercase border transition-all cursor-pointer select-none ${
                     visualizerMode === 'spectral-bars'
-                      ? 'border-[var(--accent-primary)] text-[var(--accent-primary)] bg-[var(--accent-primary)]/15 font-medium'
-                      : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+                      ? 'bg-[var(--accent-primary)] text-[#FFFFFF] dark:text-[#10110E] border-[var(--accent-primary)] font-semibold shadow-sm'
+                      : 'border hairline-border text-[var(--text-secondary)] hover:border-[var(--accent-primary)] hover:text-[var(--text-primary)] bg-[var(--bg-chip)]'
                   }`}
                 >
                   Spectral
                 </button>
                 <button
+                  type="button"
                   onClick={() => setVisualizerMode('fine-frequencies')}
-                  className={`px-2.5 py-1 text-[10px] uppercase border transition-colors ${
+                  className={`px-2.5 py-1 text-[10px] uppercase border transition-all cursor-pointer select-none ${
                     visualizerMode === 'fine-frequencies'
-                      ? 'border-[var(--accent-primary)] text-[var(--accent-primary)] bg-[var(--accent-primary)]/15 font-medium'
-                      : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+                      ? 'bg-[var(--accent-primary)] text-[#FFFFFF] dark:text-[#10110E] border-[var(--accent-primary)] font-semibold shadow-sm'
+                      : 'border hairline-border text-[var(--text-secondary)] hover:border-[var(--accent-primary)] hover:text-[var(--text-primary)] bg-[var(--bg-chip)]'
                   }`}
                 >
                   Waves
@@ -273,12 +281,23 @@ export const ImmersivePlayer: React.FC<ImmersivePlayerProps> = ({
               </div>
 
               <button
+                type="button"
                 onClick={() => setShowDetailDrawer(!showDetailDrawer)}
-                className="text-[10px] uppercase tracking-wider text-[var(--accent-primary)] hover:underline flex items-center gap-1 font-medium"
+                className="text-[10px] uppercase tracking-wider text-[var(--accent-primary)] hover:text-[var(--text-primary)] flex items-center gap-1 font-semibold px-2 py-1 border hairline-border bg-[var(--bg-chip)] hover:border-[var(--accent-primary)] transition-colors cursor-pointer select-none"
               >
                 <span>{showDetailDrawer ? 'View Lyrics' : 'Full Notes'}</span>
                 <Info className="w-3 h-3" />
               </button>
+            </div>
+
+            {/* Featured Artwork Secondary Spotify CTA: Non-obstructive placement */}
+            <div className="w-full flex justify-center items-center mt-3 pt-3 border-t hairline-border">
+              <SpotifyCta
+                spotifyUrl={track.spotifyUrl}
+                trackTitle={track.title}
+                variant="featured-cover"
+                className="w-full justify-center"
+              />
             </div>
           </div>
         </section>

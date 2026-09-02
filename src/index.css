@@ -63,21 +63,21 @@
 
   [data-theme="light"],
   .light {
-    /* Theme Tokens - Light Mode based on #646631, #F1EA8A, #C9DCE9, #797771 */
+    /* Theme Tokens - Light Mode with High Contrast Editorial Palette */
     --bg-main: #F7F6F1;
     --bg-surface: #EFECE4;
     --bg-surface-elevated: #FFFFFF;
-    --bg-surface-translucent: rgba(247, 246, 241, 0.88);
+    --bg-surface-translucent: rgba(247, 246, 241, 0.92);
     --bg-card: #FFFFFF;
     --bg-card-hover: #F3EFE7;
-    --bg-chip: #EDE9DF;
-    --bg-badge: rgba(100, 102, 49, 0.12);
+    --bg-chip: #E8E4D8;
+    --bg-badge: rgba(100, 102, 49, 0.14);
     --player-bar-bg: rgba(247, 246, 241, 0.96);
 
     --text-primary: #151613;
-    --text-secondary: #797771;
-    --text-muted: #95938C;
-    --text-dimmed: #B8B6AD;
+    --text-secondary: #4A4842;
+    --text-muted: #6E6C64;
+    --text-dimmed: #949289;
     --text-heading-sub: #484A22;
 
     /* Light Mode Accents */
@@ -88,10 +88,10 @@
     --accent-highlight: #F1EA8A;
     --accent-dark: #3F411C;
 
-    --border-subtle: rgba(121, 119, 113, 0.20);
-    --border-medium: rgba(121, 119, 113, 0.32);
-    --border-focus: rgba(100, 102, 49, 0.45);
-    --border-accent: rgba(100, 102, 49, 0.55);
+    --border-subtle: rgba(100, 102, 49, 0.18);
+    --border-medium: rgba(100, 102, 49, 0.32);
+    --border-focus: rgba(100, 102, 49, 0.50);
+    --border-accent: rgba(100, 102, 49, 0.65);
 
     --btn-primary-bg: #646631;
     --btn-primary-text: #FFFFFF;

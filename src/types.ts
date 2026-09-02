@@ -20,6 +20,7 @@ export interface TrackConfig {
   alignedUrl?: string;
   credits?: string;
   aiTools?: string;
+  spotifyUrl?: string | null;
   bpm?: number;
   tempo?: number | null;
   duration?: string;

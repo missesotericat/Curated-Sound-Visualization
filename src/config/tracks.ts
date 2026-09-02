@@ -33,7 +33,8 @@ export const TRACK_REGISTRY: TrackConfig[] = [
     description: 'An audacious convergence of Vietnamese poise and digital defiance, intertwining silk metaphors with quantum-age electronic synthesis.',
     exhibitionNotes: 'Synthesized with custom micro-tonal neural models. Explores cultural sovereignty in an era of borderless synthetic consciousness.',
     credits: 'AI Vocal Architecture & Suno / Composition Layer: AI Studio Collective',
-    aiTools: 'Neural Timbre Morphing / Latent Soundstage'
+    aiTools: 'Neural Timbre Morphing / Latent Soundstage',
+    spotifyUrl: null
   },
   {
     id: 'track-02',
@@ -65,7 +66,8 @@ export const TRACK_REGISTRY: TrackConfig[] = [
     description: 'Searching for paradise across radar frequencies only to discover that sanctuaries are constructed within the architecture of the mind.',
     exhibitionNotes: 'Spatial reverb convolution reflecting geometric marble chambers. Pure sine tones layered beneath hazy analog warmth.',
     credits: 'Generative Harmony Synthesis / Esoterica Research',
-    aiTools: 'Stochastic Reverb / Harmonic Tensor Fields'
+    aiTools: 'Stochastic Reverb / Harmonic Tensor Fields',
+    spotifyUrl: null
   },
   {
     id: 'track-03',
@@ -97,7 +99,8 @@ export const TRACK_REGISTRY: TrackConfig[] = [
     description: 'Wiping the canvas clean. Stepping onto an infinite reflective floor where every choice echoes into an uncharted tomorrow.',
     exhibitionNotes: 'Dynamic algorithmic polyrhythms with cinematic swell automation. Designed as the centerpiece for transformative contemplation.',
     credits: 'Prompt Engineering & Vocal Harmonizer',
-    aiTools: 'Dynamic Stem Generation / Adaptive EQ'
+    aiTools: 'Dynamic Stem Generation / Adaptive EQ',
+    spotifyUrl: null
   },
   {
     id: 'track-04',
@@ -129,7 +132,8 @@ export const TRACK_REGISTRY: TrackConfig[] = [
     description: 'A gentle whispered inquiry into the pressure of constant brilliance. Embracing the quiet grace of ordinary human existence.',
     exhibitionNotes: 'Captured through simulated vinyl crackle and delicate fingerpicked nylon acoustics. High-dynamic-range spoken word intimacy.',
     credits: 'Acoustic Model Synthesis / Lyrical Co-Creation',
-    aiTools: 'Nylon Resonance Generator / Granular Grain Engine'
+    aiTools: 'Nylon Resonance Generator / Granular Grain Engine',
+    spotifyUrl: null
   },
   {
     id: 'track-05',
@@ -161,7 +165,8 @@ export const TRACK_REGISTRY: TrackConfig[] = [
     description: 'A feverish critique of relentless dopamine chasing, infinite feeds, and the blur between digital identity and existential void.',
     exhibitionNotes: 'Hyper-compressed bitcrushed transients and fractured speech samples evoking midnight doom-scrolling psychosis.',
     credits: 'Suno AI Prompting & Sound Design',
-    aiTools: 'Glitch Modulation / Bitcrush Synthesizer'
+    aiTools: 'Glitch Modulation / Bitcrush Synthesizer',
+    spotifyUrl: null
   },
   {
     id: 'track-06',
@@ -195,6 +200,7 @@ export const TRACK_REGISTRY: TrackConfig[] = [
     description: 'An invitation to break the trance of modern routine, walking through a surreal neon graveyard toward unfiltered self-awakening.',
     exhibitionNotes: 'Distorted guitar textures combined with mechanized industrial drum patterns and theatrical vocal performance.',
     credits: 'Art Rock Prompting & Neural Stems',
-    aiTools: 'Industrial Rhythm Matrix / Neural Saturation'
+    aiTools: 'Industrial Rhythm Matrix / Neural Saturation',
+    spotifyUrl: null
   }
 ];
