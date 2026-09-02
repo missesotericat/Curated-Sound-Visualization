@@ -2,14 +2,17 @@ export interface TrackConfig {
   id: string;
   slug: string;
   number: string;
+  trackNumber?: number;
   title: string;
   subtitle?: string;
+  artist?: string;
   concept: string;
   genre: string[];
   mood: string[];
   themes?: string[];
   contentType?: 'SONG' | 'PODCAST' | 'INSTRUMENTAL' | 'SPOKEN WORD' | 'SOUNDSCAPE' | string;
   lyricLanguages?: string[];
+  languages?: string[];
   language: string;
   translationLanguage?: string;
   artwork: string;
@@ -32,6 +35,7 @@ export interface TrackConfig {
   description?: string;
   exhibitionNotes?: string;
   year?: string;
+  date?: string;
   sourceUrl?: string;
   metadata?: Record<string, any>;
 }
