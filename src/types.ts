@@ -1,3 +1,14 @@
+export type CollectionSelectionMode = 'auto' | 'manual';
+export type CollectionSortOption = 'newest' | 'mostPlayed' | 'titleAZ' | 'titleZA';
+
+export interface CollectionConfig {
+  limit: number;
+  mode: CollectionSelectionMode;
+  sort: CollectionSortOption;
+  trackIds?: string[];
+  prioritizeFeatured?: boolean;
+}
+
 export interface TrackConfig {
   id: string;
   slug: string;
@@ -6,16 +17,17 @@ export interface TrackConfig {
   title: string;
   subtitle?: string;
   artist?: string;
-  concept: string;
-  genre: string[];
-  mood: string[];
+  concept?: string;
+  genre?: string[];
+  mood?: string[];
   themes?: string[];
   contentType?: 'SONG' | 'PODCAST' | 'INSTRUMENTAL' | 'SPOKEN WORD' | 'SOUNDSCAPE' | string;
   lyricLanguages?: string[];
   languages?: string[];
-  language: string;
+  language?: string;
   translationLanguage?: string;
   artwork: string;
+  cover?: string;
   audio: string;
   audioUrl?: string;
   lyrics: string;
@@ -36,6 +48,9 @@ export interface TrackConfig {
   exhibitionNotes?: string;
   year?: string;
   date?: string;
+  createdAt?: string;
+  playCount?: number;
+  featuredInCollection?: boolean;
   sourceUrl?: string;
   metadata?: Record<string, any>;
 }

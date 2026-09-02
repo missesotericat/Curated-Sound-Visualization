@@ -173,6 +173,7 @@ export default function App() {
               isPlaying={isPlaying}
               onPlayTrack={handlePlayTrack}
               onOpenLyrics={handleOpenLyrics}
+              onNavigateToArchive={() => handleNavigateSection('closing')}
             />
 
             {/* 08 — THE ARCHIVE INDEX & COLOPHON */}

@@ -47,6 +47,35 @@ export function extractDocLanguages(raw: any): {
     translationLanguage = raw.translationLanguage.toUpperCase();
   }
 
+  // If not explicitly declared in metadata, detect from lyrics text content
+  if (!originalLanguage && Array.isArray(raw?.sections)) {
+    let viCount = 0;
+    let enCount = 0;
+    const viChars = /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđĐ]/i;
+    raw.sections.forEach((sec: any) => {
+      (sec.lines || []).forEach((l: any) => {
+        const txt = (l.text || l.original || '').trim();
+        if (viChars.test(txt)) {
+          viCount++;
+        }
+        if (/[a-zA-Z]/.test(txt)) {
+          enCount++;
+        }
+      });
+    });
+
+    if (viCount > 0 && enCount > 0) {
+      originalLanguage = 'EN + VI';
+      if (!translationLanguage) translationLanguage = 'VI';
+    } else if (viCount > 0) {
+      originalLanguage = 'VI';
+      if (!translationLanguage) translationLanguage = 'EN';
+    } else if (enCount > 0) {
+      originalLanguage = 'EN';
+      if (!translationLanguage) translationLanguage = 'VI';
+    }
+  }
+
   return { originalLanguage, translationLanguage };
 }
 
@@ -294,20 +323,33 @@ export function mergeLyricsAndAlignment(
 /**
  * Fetches both human lyrics and machine-aligned timing files, merging them according to architecture contracts.
  */
-export async function fetchTrackLyrics(slug: string, fallbackDuration = 240): Promise<NormalizedLyricDoc | null> {
+export async function fetchTrackLyrics(
+  slug: string,
+  fallbackDuration = 240,
+  customLyricsUrl?: string | null
+): Promise<NormalizedLyricDoc | null> {
   const cacheKey = `${slug}_${fallbackDuration}`;
   if (lyricCache.has(cacheKey)) {
     return lyricCache.get(cacheKey)!;
   }
 
-  const lyricUrl = `${GITHUB_RAW_BASE_URL}lyrics/${slug}.json`;
+  const defaultLyricUrl = `${GITHUB_RAW_BASE_URL}lyrics/${slug}.json`;
+  const alternateLyricUrl = `${GITHUB_RAW_BASE_URL}lyrics/${slug}.lyrics.json`;
   const alignedUrl = `${GITHUB_RAW_BASE_URL}aligned/${slug}.json`;
 
   try {
-    const [lyricData, alignedData] = await Promise.all([
-      fetchJsonSafe(lyricUrl),
-      fetchJsonSafe(alignedUrl)
-    ]);
+    let lyricData: any = null;
+    if (customLyricsUrl) {
+      lyricData = await fetchJsonSafe(customLyricsUrl);
+    }
+    if (!lyricData) {
+      lyricData = await fetchJsonSafe(defaultLyricUrl);
+    }
+    if (!lyricData) {
+      lyricData = await fetchJsonSafe(alternateLyricUrl);
+    }
+
+    const alignedData = await fetchJsonSafe(alignedUrl);
 
     if (!lyricData && !alignedData) {
       throw new Error(`Failed to load lyric resources for ${slug}`);

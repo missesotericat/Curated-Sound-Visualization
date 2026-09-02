@@ -70,7 +70,7 @@ export const ImmersivePlayer: React.FC<ImmersivePlayerProps> = ({
     setImgLoaded(false);
     setImgError(false);
     const trackSecs = parseDurationToSeconds(track.duration, 240);
-    fetchTrackLyrics(track.slug, trackSecs).then((doc) => {
+    fetchTrackLyrics(track.slug, trackSecs, track.lyrics).then((doc) => {
       if (isMounted) {
         setLyrics(doc);
       }
@@ -79,7 +79,7 @@ export const ImmersivePlayer: React.FC<ImmersivePlayerProps> = ({
     return () => {
       isMounted = false;
     };
-  }, [track.slug]);
+  }, [track.slug, track.lyrics]);
 
   const currentIndex = allTracks.findIndex((t) => t.id === track.id);
 
@@ -329,10 +329,18 @@ export const ImmersivePlayer: React.FC<ImmersivePlayerProps> = ({
                 {/* Top Right Label Block */}
                 <div className="text-right flex flex-col items-end gap-1 font-sans-clean text-[10px] uppercase tracking-widest text-[var(--text-muted)]">
                   <div className="border hairline-border px-3 py-1 font-mono text-xs text-[var(--text-primary)] font-semibold bg-[var(--bg-chip)]">
-                    {track.number}/06
+                    {track.number}/{String(allTracks.length).padStart(2, '0')}
                   </div>
-                  <div className="text-[var(--accent-primary)] font-semibold">{track.genre[0]}</div>
-                  <div className="opacity-70 font-mono text-[var(--text-secondary)]">{track.bpm} BPM</div>
+                  {(track.genre?.[0] || track.concept || track.contentType) && (
+                    <div className="text-[var(--accent-primary)] font-semibold">
+                      {track.genre?.[0] || track.concept || track.contentType}
+                    </div>
+                  )}
+                  {(track.bpm || track.tempo) && (
+                    <div className="opacity-70 font-mono text-[var(--text-secondary)]">
+                      {track.bpm || track.tempo} BPM
+                    </div>
+                  )}
                 </div>
               </div>
 

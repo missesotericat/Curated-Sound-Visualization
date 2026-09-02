@@ -17,7 +17,7 @@ export const TrackDetailDrawer: React.FC<TrackDetailDrawerProps> = ({ track, onC
       <div className="flex justify-between items-center pb-4 mb-4 border-b hairline-border">
         <div className="flex items-center gap-3">
           <span className="border hairline-border bg-[var(--bg-chip)] px-2.5 py-0.5 font-mono text-xs uppercase font-medium text-[var(--text-primary)]">
-            {track.number} / 06
+            CATALOG #{track.number}
           </span>
           <span className="text-[10px] font-sans-clean uppercase tracking-widest text-[var(--accent-primary)] font-semibold flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-primary)]"></span>

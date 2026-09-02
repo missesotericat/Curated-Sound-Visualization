@@ -100,10 +100,10 @@ export const HeroCover: React.FC<HeroCoverProps> = ({
 
               <div className="flex justify-between items-baseline pt-3 font-sans-clean">
                 <div>
-                  <span className="text-[10px] font-mono text-[var(--accent-primary)] font-semibold block">01 / 06</span>
+                  <span className="text-[10px] font-mono text-[var(--accent-primary)] font-semibold block">01 / {String(tracks.length).padStart(2, '0')}</span>
                   <h3 className="font-heading-jost text-lg text-[var(--text-primary)] font-medium">{featuredTrack.title}</h3>
                 </div>
-                <span className="text-[10px] uppercase tracking-wider text-[var(--text-secondary)] font-mono">{featuredTrack.genre[0]}</span>
+                <span className="text-[10px] uppercase tracking-wider text-[var(--text-secondary)] font-mono">{featuredTrack.genre?.[0] || featuredTrack.contentType || 'SONG'}</span>
               </div>
             </div>
 
@@ -122,7 +122,7 @@ export const HeroCover: React.FC<HeroCoverProps> = ({
                 </div>
                 <div className="pt-1.5 flex justify-between items-center text-[9px] font-sans-clean uppercase tracking-wider">
                   <span className="font-mono text-[var(--accent-primary)] font-semibold">02 {tracks[1].title}</span>
-                  <span className="text-[var(--text-secondary)]">{tracks[1].mood[0]}</span>
+                  <span className="text-[var(--text-secondary)]">{tracks[1].mood?.[0] || tracks[1].genre?.[0] || ''}</span>
                 </div>
               </div>
             )}
@@ -133,7 +133,7 @@ export const HeroCover: React.FC<HeroCoverProps> = ({
       {/* Hero Footnote Indicator Bar */}
       <div className="w-full pt-12 flex flex-col sm:flex-row justify-between items-start sm:items-center text-[10px] font-sans-clean uppercase tracking-widest text-[var(--text-muted)] border-t hairline-border gap-4">
         <div className="flex items-center gap-6">
-          <span className="font-mono text-[var(--text-primary)] font-semibold">01 / 06 TRACKS</span>
+          <span className="font-mono text-[var(--text-primary)] font-semibold">01 / {String(tracks.length).padStart(2, '0')} TRACKS</span>
           <span className="opacity-40">•</span>
           <span>BILINGUAL SYNCHRONIZED POETRY</span>
           <span className="opacity-40">•</span>
